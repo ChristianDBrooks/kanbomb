@@ -1,11 +1,11 @@
 import sgMail from '@sendgrid/mail';
 
 export async function sendMagicLinkEmail(email:string, link: string) {
-  const sender = 'support@duotech.us';
+  const sender = process.env.SENDGRID_VERIFIED_SENDER!;
   sgMail.setApiKey(process.env.SENDGRID_API_KEY!)
   const msg = {
     to: email, 
-    from: sender, // Change to your verified sender
+    from: sender,
     subject: 'NextJS Starter Sign In Link',
     html: `<p>Sign in from anywhere by clicking the magic link below!</p><a href="${link}">Sign In</a>`,
   }

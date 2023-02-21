@@ -2,9 +2,16 @@
 
 ## Quickstart 
 1. Run `npm install`
+2. Setup Authentication
 2. Setup Prisma.
 3. Setup Stripe.
 4. Run `npm run dev`
+
+## Setup Authentication
+
+1. Set the `IRON_SESSION_PASSWORD` in `.env`.
+2. Set the `SENDGRID_API_KEY` in `.env`.
+3. Set the `SENDGRID_VERIFIED_SENDER` in `.env`
 
 ## Setup Prisma
 1. Set the `DATABASE_URL` in the `.env` file to point to your existing database.
@@ -20,8 +27,9 @@
 * Prisma
 * Prisma DBML Generator [Visualize the schema.dbml](https://dbdiagram.io/d)
 * Iron Session Authentication
-* Magic Link Email Sign In
-* MailGun
+  - Persistant Users
+  - Magic Link Login
+* SendGrid
 * Stripe
 
 ___

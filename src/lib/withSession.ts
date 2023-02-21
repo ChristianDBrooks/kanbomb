@@ -50,7 +50,7 @@ export async function saveSession(session: IronSession, user: IronSessionData["u
 }
 
 export async function generateMagicLink(user: User) {
-  const host = 'http://localhost:3000';
+  const host = location.protocol + '//' + location.host;
   const fifteenMinutesInSeconds = 15 * 60;
   const seal = await sealData(
     {

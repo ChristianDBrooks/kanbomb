@@ -1,0 +1,26 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table User {
+  id String [pk]
+  name String
+  role Role [not null, default: 'USER']
+  credential Credential
+}
+
+Table Credential {
+  id String [pk]
+  username String [unique, not null]
+  userId String [unique, not null]
+  hash String [not null]
+  email String [unique, not null]
+  user User [not null]
+}
+
+Enum Role {
+  USER
+  ADMIN
+}
+
+Ref: Credential.userId - User.id

@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Represents a unique user information
+model User {
+  id              String      @id @default(cuid())
+  name            String?
+  role            Role        @default(USER)
+  credential      Credential?
+}
+
+// Represents a credential for authentication
+model Credential {
+  id         String @id @default(cuid())
+  username   String @unique
+  userId     String @unique
+  hash       String
+  email      String @unique
+  user       User   @relation(fields: [userId], references: [id])
+}
+
+// Represents a user role used for authorization
+enum Role {
+  USER
+  ADMIN
+}

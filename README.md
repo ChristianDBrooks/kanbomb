@@ -1,3 +1,31 @@
+# NextJS DuoTech Kit
+
+## Quickstart 
+1. Run `npm install`
+2. Setup Prisma.
+3. Setup Stripe.
+4. Run `npm run dev`
+
+## Setup Prisma
+1. Set the `DATABASE_URL` in the `.env` file to point to your existing database.
+2. Run `npx prisma generate` to generate the Prisma Client. You can then start querying your database.
+2. Run `npx prisma db push` to generate the Prisma Client. You can then start querying your database.
+
+## Setup Stripe
+1. Set the `STRIPE_SECRET_KEY` in the `.env` file to point to your test environment Stripe key.
+
+## Kit Includes
+* Material UI
+* Material Icons
+* Prisma
+* Prisma DBML Generator [Visualize the schema.dbml](https://dbdiagram.io/d)
+* Iron Session Authentication
+* Magic Link Email Sign In
+* MailGun
+* Stripe
+
+___
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started

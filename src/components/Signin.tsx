@@ -11,26 +11,16 @@ import Link from '@mui/material/Link'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import NextLink from 'next/link'
-import { useRouter } from 'next/router'
 import * as React from 'react'
-
-export default function SignInPage() {
-  const route = useRouter()
+export default function SignIn() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const authenticationResponse = await fetch('/api/auth/authenticate', {
-      headers: {'content-type': 'application/json'},
+    const authenticationResponse = await fetch('/credentials/authenticate', {
       method: 'POST',
       body: JSON.stringify(Object.fromEntries(data.entries()))
     });
-
-    if (!authenticationResponse.ok) {
-      const res = await authenticationResponse.json()
-      console.error(res.message);
-      return;
-    }
-    route.push('/dashboard')
+    console.log('authenticationResponse', authenticationResponse);
   };
 
   return (
@@ -85,7 +75,7 @@ export default function SignInPage() {
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href="/forgot-password" variant="body2">
+              <Link href="#" variant="body2">
                 Forgot password?
               </Link>
             </Grid>

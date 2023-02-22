@@ -14,7 +14,7 @@ async function authenticateCredentialRoute(
     const { username, password } = req.body;
 
     if (!username || !password) {
-      res.status(400).json("You must provide username and password!");
+      res.status(400).send("You must provide username and password!");
       return;
     }
 
@@ -30,8 +30,8 @@ async function authenticateCredentialRoute(
 
     // If credential could not be found return error
     if (!credential) {
-      console.log("Unable to find username" + username);
-      res.status(404).json("Username or password does not exist.");
+      console.log("Unable to find username " + username);
+      res.status(404).send("Username or password does not exist.");
       return;
     }
 
@@ -49,14 +49,16 @@ async function authenticateCredentialRoute(
         if (credential) await saveSession(req.session, {
           userId: credential.userId, 
           username: credential.username, 
-          role: credential.user.role
+          role: credential.user.role,
+          email: credential.email,
+          verified: credential.verified,
         });
         res.status(200).send('Credentials authenticated!');
         return;
       }
 
       // Not Authenticated
-      res.status(404).json("Username or password does not exist.");
+      res.status(404).send("Username or password does not exist.");
     });
   } else {
     res.status(400).send("Request method " + req.method + " not supported.");

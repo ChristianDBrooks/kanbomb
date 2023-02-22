@@ -8,7 +8,7 @@ export default function ForgotPassword() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const magicLinkSenderResponse = await fetch('/api/auth/sendMagicLink', {
+    const magicLinkSenderResponse = await fetch('/api/auth/sendMail/magicLink', {
       headers: { 'content-type': 'application/json' },
       method: 'POST',
       body: JSON.stringify(Object.fromEntries(data.entries()))

@@ -4,9 +4,9 @@ import { saveSession, withSessionRoute } from "@lib/withSession";
 import { unsealData } from "iron-session";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default withSessionRoute(magicLoginRoute);
+export default withSessionRoute(verifyRoute);
 
-async function magicLoginRoute(req: NextApiRequest, res: NextApiResponse) {
+async function verifyRoute(req: NextApiRequest, res: NextApiResponse) {
   if (typeof req.query.seal == 'string') {
     const { userId }: { userId: string } = await unsealData(req.query.seal, {
       password: process.env.IRON_SESSION_PASSWORD!,
@@ -17,24 +17,30 @@ async function magicLoginRoute(req: NextApiRequest, res: NextApiResponse) {
       res.redirect('/404') // TODO: Make a dedicated expiration page.
     }
 
-    const credential = await prisma.credential.findUnique({
+    const credential = await prisma.credential.update({
       where: {
         userId
+      },
+      data: {
+        verified: true
       },
       include: {
         user: true
       }
     })
 
+    console.log("verified credential", credential)
+
     if (credential) {
       await saveSession(req.session, {
         userId: userId, 
         username: credential.username, 
         role: credential.user.role,
+        verificationSession: true,
         email: credential.email,
         verified: credential.verified,
       })
-      res.redirect(`/dashboard`);
+      res.redirect(`/verified`);
     }
     
   } else {

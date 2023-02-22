@@ -6,6 +6,9 @@ declare module "iron-session" {
       userId: string;
       username: string;
       role?: "ADMIN" | "USER";
+      verificationSession?: boolean;
+      verified: boolean;
+      email: string;
     };
   }
 }
@@ -19,7 +22,7 @@ import {
   NextApiHandler
 } from "next";
 
-const sessionOptions = {
+export const sessionOptions = {
   password: process.env.IRON_SESSION_PASSWORD!,
   cookieName: "next_starter_iron_session",
   // secure: true should be used in production (HTTPS) but can't be used in development (HTTP)
@@ -53,7 +56,7 @@ export async function saveSession(session: IronSession, user: IronSessionData["u
 
 /* Function used to generate magic links for the provided user. */
 export async function generateMagicLink(user: User) {
-  const host = location.protocol + '//' + location.host;
+  const host = process.env.EMAIL_REDIRECT_URI
   const fifteenMinutesInSeconds = 15 * 60;
   const seal = await sealData(
     {
@@ -65,4 +68,20 @@ export async function generateMagicLink(user: User) {
     },
   );
   return `${host}/api/auth/magicLogin?seal=${seal}`
+}
+
+/* Function used to generate verifcation links for the provided user. */
+export async function generateVerificationLink(user: User) {
+  const host = process.env.EMAIL_REDIRECT_URI;
+  const twentyFourHoursInSeconds = 60 * 60 * 24;
+  const seal = await sealData(
+    {
+      userId: user.id,
+    },
+    {
+      password: process.env.IRON_SESSION_PASSWORD!,
+      ttl: twentyFourHoursInSeconds
+    },
+  );
+  return `${host}/api/auth/verify?seal=${seal}`
 }

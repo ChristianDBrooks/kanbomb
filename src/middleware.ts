@@ -3,7 +3,6 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 export const middleware = async (req: NextRequest) => {
-  console.log('middleware', req.url)
   const res = NextResponse.next();
   // Do not re-import the session options from withSession. Edge will not support this.
   const session = await getIronSession(req, res, {

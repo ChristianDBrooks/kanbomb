@@ -8,7 +8,6 @@
 4. Run `npm run dev`
 
 ## Setup Authentication
-
 1. Set the `IRON_SESSION_PASSWORD` in `.env`.
 2. Set the `SENDGRID_API_KEY` in `.env`.
 3. Set the `SENDGRID_VERIFIED_SENDER` in `.env`

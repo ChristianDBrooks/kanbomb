@@ -15,6 +15,7 @@ Table Credential {
   userId String [unique, not null]
   hash String [not null]
   email String [unique, not null]
+  verified Boolean [not null, default: false]
   user User [not null]
 }
 

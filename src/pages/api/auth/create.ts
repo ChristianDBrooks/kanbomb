@@ -1,5 +1,6 @@
 import prisma from "@lib/prisma";
-import { saveSession, withSessionRoute } from "@lib/withSession";
+import { sendVerificationEmail } from "@lib/sendgrid";
+import { generateVerificationLink, saveSession, withSessionRoute } from "@lib/withSession";
 import bcrypt from "bcrypt";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -62,12 +63,19 @@ async function createCredentialRoute(
           user: true
         }
       });
-
+      
       if (credential) await saveSession(req.session, {
         userId: credential.userId, 
         username: credential.username, 
-        role: credential.user.role
+        role: credential.user.role,
+        email: credential.email,
+        verified: credential.verified,
       });
+
+      // send verification email
+      const link = await generateVerificationLink(credential.user)
+      console.log("Verification Link Generated:", link)
+      await sendVerificationEmail(credential.email, link)
 
       res.status(200).send(null);
     });

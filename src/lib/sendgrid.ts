@@ -4,10 +4,10 @@ export async function sendMagicLinkEmail(email:string, link: string) {
   const sender = process.env.SENDGRID_VERIFIED_SENDER!;
   sgMail.setApiKey(process.env.SENDGRID_API_KEY!)
   const msg = {
-    to: email, 
-    from: sender,
-    subject: 'NextJS Starter Sign In Link',
-    html: `<p>Sign in from anywhere by clicking the magic link below!</p><a href="${link}">Sign In</a>`,
+    to: email, // Recipient
+    from: sender, // Sender
+    subject: 'NextJS Starter Sign In Link', // Subject
+    html: `<p>Sign in from anywhere by clicking the magic link below!</p><a href="${link}">Sign In</a>`, // Email Content
   }
   await sgMail
     .send(msg)

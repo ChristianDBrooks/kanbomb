@@ -14,7 +14,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Represents a unique user information
+// Represents a unique user's personal information
 model User {
   id              String      @id @default(cuid())
   name            String?
@@ -29,6 +29,7 @@ model Credential {
   userId     String @unique
   hash       String
   email      String @unique
+  verified   Boolean @default(false)
   user       User   @relation(fields: [userId], references: [id])
 }
 

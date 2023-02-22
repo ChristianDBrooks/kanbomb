@@ -1,5 +1,6 @@
 import SessionLogout from '@components/SessionLogout';
-import { withSessionSsr } from '@lib/withSession';
+import prisma from '@lib/prisma';
+import { saveSession, withSessionSsr } from '@lib/withSession';
 import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
 import { Avatar, Box, Button, Container } from "@mui/material";
 import { IronSession } from 'iron-session';
@@ -7,6 +8,33 @@ import { IronSession } from 'iron-session';
 export const getServerSideProps = withSessionSsr(
   async function getServerSideProps({ req }) {
     const user = req.session.user;
+
+    const credential = await prisma.credential.findUnique({
+      where: {
+        userId: user?.userId
+      },
+      include: {
+        user: true
+      }
+    })
+
+    if (credential && credential.verified) {
+      await saveSession(req.session, {
+        userId: credential.userId, 
+        username: credential.username, 
+        role: credential.user.role,
+        email: credential.email,
+        verified: credential.verified,
+      })
+
+      return {
+        redirect: {
+          destination: '/dashboard',
+          permanent: false
+        }
+      }
+    }
+
     return {
       props: {
         user: user,

@@ -1,3 +1,4 @@
+import ResponsiveAppBar from "@components/ResponsiveAppBar";
 import { CacheProvider, EmotionCache } from "@emotion/react";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
@@ -23,6 +24,7 @@ export default function MyApp(props: MyAppProps) {
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
+        <ResponsiveAppBar />
         <Component {...pageProps} />
       </ThemeProvider>
     </CacheProvider>

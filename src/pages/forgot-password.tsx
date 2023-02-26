@@ -38,7 +38,7 @@ export default function ForgotPassword() {
         Forgot password
       </Typography>
       <Typography component="p">Thank you! If the email provided exists. You will receive an email shortly.</Typography>
-      <Link component={NextLink} href="/" variant="body2">
+      <Link component={NextLink} href="/sign-in" variant="body2">
         {"Return to Sign In"}
       </Link>
     </Box>
@@ -85,7 +85,7 @@ export default function ForgotPassword() {
           </Button>
           <Grid container>
             <Grid item>
-              <Link component={NextLink} href="/" variant="body2">
+              <Link component={NextLink} href="/sign-in" variant="body2">
                 {"Return to Sign In"}
               </Link>
             </Grid>

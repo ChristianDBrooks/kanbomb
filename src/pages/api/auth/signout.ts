@@ -2,9 +2,9 @@ import { withSessionRoute } from "@lib/withSession";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 
-export default withSessionRoute(sessionLogout);
+export default withSessionRoute(SignOutRoute);
 
-async function sessionLogout(
+async function SignOutRoute(
   req: NextApiRequest,
   res: NextApiResponse
 ) {

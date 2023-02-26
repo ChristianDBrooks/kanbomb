@@ -2,34 +2,20 @@ import { withSessionSsr } from "@lib/withSession";
 import CheckIcon from "@mui/icons-material/CheckCircle";
 import { Avatar, Box, Link, Typography } from "@mui/material";
 import NextLink from "next/link";
+import { withAuthSsr } from "src/helpers/withAuthenticationSsr";
 
 export const getServerSideProps = withSessionSsr(
   async function getServerSideProps({ req }) {
-    const user = req.session.user;
-
-    if (!user) {
-      return {
-        redirect: {
-          destination: '/',
-          permanent: false
-        },
-      };
-    }
-
-    if (!user.verificationSession) {
-      return {
-        redirect: {
-          destination: '/dashboard',
-          permanent: false
-        },
-      };
-    }
-
-    return {
-      props: {
-        user,
-      },
-    };
+    return withAuthSsr(req, () => {      
+      if (!req.session.user?.verificationSession) {
+        return {
+          redirect: {
+            destination: '/dashboard',
+            permanent: false
+          },
+        };
+      }
+    });
   },
 );
 

@@ -1,6 +1,7 @@
 import { useIronSession } from '@lib/swr';
-import AdbIcon from '@mui/icons-material/Adb';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuIcon from '@mui/icons-material/Menu';
+import { Link } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -8,21 +9,32 @@ import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { IronSession } from 'iron-session';
-import Link from 'next/link';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
 import * as React from 'react';
-import SessionLogout from './SessionLogout';
+import SignOut from './SignOut';
 
-const pages = ['Home', 'Dashboard'];
-const settings = ['Profile'];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-  const {session, isLoading, isError} = useIronSession() as {session: IronSession};
+  const {session} = useIronSession() as {session: IronSession};
+  const theme = useTheme();
+  const router = useRouter();
+  const authenticated = !!session?.user;
+  const pages = authenticated ? [
+    {text: 'Home', path: '/'}, 
+    {text: 'Dashboard', path: '/dashboard'}
+  ] : [
+    {text: 'Home', path: '/'}, 
+  ];
+  const settings = ['Profile'];
+
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -43,24 +55,21 @@ function ResponsiveAppBar() {
     <AppBar position="sticky">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="/"
+          <Box 
             sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
+              display: {xs: 'none', md: 'flex'},
+              mr: 2
             }}
           >
-            LOGO
-          </Typography>
+            <Link href='/'
+              style={{
+                display: 'flex',
+                justifyContent: 'center'
+              }}
+            >
+              <Image src='./dt-logo.svg' width={100} height={32} alt=''/>
+            </Link>
+          </Box>
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -91,17 +100,17 @@ function ResponsiveAppBar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
+                <Link key={page.text} href={page.path} style={{textDecoration: 'none', color: theme.palette.text.primary}}>
+                  <MenuItem onClick={handleCloseNavMenu}>
+                    <Typography textAlign="center">{page.text}</Typography>
+                  </MenuItem>
+                </Link>
               ))}
             </Menu>
           </Box>
           <Typography
             variant="h5"
             noWrap
-            component="a"
-            href=""
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },
@@ -111,22 +120,26 @@ function ResponsiveAppBar() {
               textDecoration: 'none',
             }}
           >
-            {session?.user?.username ? `Welcome ${session.user.username}` : 'NextJS Starter'}
+            <Image src='./dt-logo.svg' width={100} height={64} alt=''/>
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Link
-                key={page}
+                key={page.text}
                 onClick={handleCloseNavMenu}
-                style={{ marginBlock: 2, color: 'white', display: 'block' }}
-                href={page.toLowerCase()}
+                style={{ 
+                  marginInline: '.5rem', 
+                  color: theme.palette.text.primary,
+                  display: 'block' ,
+                  textDecoration: 'none'
+                }}
+                href={page.path}
               >
-                {page}
+                {page.text}
               </Link>
             ))}
           </Box>
-
-          <Box sx={{ flexGrow: 0 }}>
+          {authenticated ? (<Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Profile Picture" src="/pfp-small.jpg" />
@@ -149,15 +162,23 @@ function ResponsiveAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
+                <Link key={setting} href={'/'+setting.toLowerCase()} style={{textDecoration: 'none', color: theme.palette.text.primary}}>
+                  <MenuItem onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center">{setting}</Typography>
+                  </MenuItem>
+                </Link>
               ))}
               <MenuItem>
-                <SessionLogout />
+                <SignOut />
               </MenuItem>
             </Menu>
+          </Box>) : (
+            <Box sx={{ flexGrow: 0 }}>
+              <IconButton onClick={() => router.push('/sign-in')} title="Sign In">
+                <AccountCircleIcon />
+              </IconButton>
           </Box>
+          )}
         </Toolbar>
       </Container>
     </AppBar>

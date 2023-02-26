@@ -1,24 +1,17 @@
 import { withSessionSsr } from "@lib/withSession";
 import { Container, List, ListItem, Typography } from "@mui/material";
 import { IronSessionData } from "iron-session";
+import { withAuthSsr } from "src/helpers/withAuthenticationSsr";
+
 export const getServerSideProps = withSessionSsr(
-  async function getServerSideProps({ req }) {
-    const user = req.session.user;
-
-    if (!user) {
+  function getServerSideProps({ req }) {
+    return withAuthSsr(req, () => {
       return {
-        redirect: {
-          destination: '/',
-          permanent: false
-        },
-      };
-    }
-
-    return {
-      props: {
-        user: req.session.user,
-      },
-    };
+        props: {
+          user: req.session.user
+        }
+      }
+    });
   },
 );
 

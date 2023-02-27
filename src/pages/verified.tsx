@@ -2,11 +2,11 @@ import { withSessionSsr } from "@lib/withSession";
 import CheckIcon from "@mui/icons-material/CheckCircle";
 import { Avatar, Box, Link, Typography } from "@mui/material";
 import NextLink from "next/link";
-import { withAuthSsr } from "src/helpers/withAuthenticationSsr";
+import { withAuthenticationGuard } from "src/helpers/guards";
 
 export const getServerSideProps = withSessionSsr(
   async function getServerSideProps({ req }) {
-    return withAuthSsr(req, () => {      
+    return withAuthenticationGuard(req, () => {      
       if (!req.session.user?.verificationSession) {
         return {
           redirect: {

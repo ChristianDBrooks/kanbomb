@@ -2,12 +2,12 @@ import PageHeader from "@components/PageHeader";
 import { withSessionSsr } from "@lib/withSession";
 import { Avatar, Box, Container, Paper, Typography } from "@mui/material";
 import { IronSessionData } from "iron-session";
-import { withAuthSsr } from "src/helpers/withAuthenticationSsr";
+import { withAuthenticationGuard } from "src/helpers/guards";
 
 
 export const getServerSideProps = withSessionSsr(
   function getServerSideProps({ req }) {
-    return withAuthSsr(req, () => {
+    return withAuthenticationGuard(req, () => {
       return {
         props: {
           user: req.session.user

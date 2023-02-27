@@ -1,6 +1,6 @@
 import { IncomingMessage } from "http";
 
-export async function withAuthSsr(req: IncomingMessage & {
+export async function withAuthenticationGuard(req: IncomingMessage & {
   cookies: Partial<{
       [key: string]: string;
   }>;
@@ -11,6 +11,15 @@ export async function withAuthSsr(req: IncomingMessage & {
     return {
       redirect: {
         destination: '/sign-in',
+        permanent: false
+      },
+    };
+  }
+
+  if (!user.verified) {
+    return {
+      redirect: {
+        destination: '/not-verified',
         permanent: false
       },
     };

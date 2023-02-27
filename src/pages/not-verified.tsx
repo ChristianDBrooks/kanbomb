@@ -4,11 +4,11 @@ import { saveSession, withSessionSsr } from '@lib/withSession';
 import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
 import { Avatar, Box, Button, Container, Typography } from "@mui/material";
 import { IronSession } from 'iron-session';
-import { withAuthSsr } from 'src/helpers/withAuthenticationSsr';
+import { withAuthenticationGuard } from 'src/helpers/guards';
 
 export const getServerSideProps = withSessionSsr(
   async function getServerSideProps({ req }) {
-    return withAuthSsr(req, async () => {
+    return withAuthenticationGuard(req, async () => {
       const user = req.session.user;
 
       const credential = await prisma.credential.findUnique({

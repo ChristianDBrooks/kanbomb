@@ -29,6 +29,7 @@
 * Iron Session Authentication
   - Persistant Users
   - Magic Link Login
+* SWR Fetching
 * SendGrid
 * Stripe
 

@@ -1,13 +1,16 @@
-import { IncomingMessage } from "http";
+import { GetServerSidePropsContext, PreviewData } from "next";
+import { ParsedUrlQuery } from "querystring";
 
-export async function withAuthenticationGuard(req: IncomingMessage & {
-  cookies: Partial<{
-      [key: string]: string;
-  }>;
-}, ssrWork?: Function) {
-  const user = req.session.user;
+export async function withAuthenticationGuard( 
+  ctx: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>,
+  ssrWork?: Function
+) {
+  const user = ctx.req?.session?.user;
+  const url = ctx?.resolvedUrl;
   
+  console.log('gaurds: routing -', url);
   if (!user) {
+    console.log('guards: redirecting - /sign-in');
     return {
       redirect: {
         destination: '/sign-in',
@@ -15,8 +18,9 @@ export async function withAuthenticationGuard(req: IncomingMessage & {
       },
     };
   }
-
-  if (!user.verified) {
+  
+  if (!url.endsWith('/not-verified') && !user.verified) {
+    console.log('guards: redirecting - /not-verified');
     return {
       redirect: {
         destination: '/not-verified',
@@ -25,5 +29,6 @@ export async function withAuthenticationGuard(req: IncomingMessage & {
     };
   }
 
-  return ssrWork ? ssrWork() : { props: {}};
+  const ssrWorkReturn = ssrWork && ssrWork();
+  return ssrWorkReturn ?? { props: {}};
 }

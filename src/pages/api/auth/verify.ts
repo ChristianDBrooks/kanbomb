@@ -1,6 +1,6 @@
 
+import { saveSession, withSessionRoute } from "@lib/ironSession";
 import prisma from "@lib/prisma";
-import { saveSession, withSessionRoute } from "@lib/withSession";
 import { unsealData } from "iron-session";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -33,8 +33,8 @@ async function verifyRoute(req: NextApiRequest, res: NextApiResponse) {
 
     if (credential) {
       await saveSession(req.session, {
-        userId: userId, 
-        username: credential.username, 
+        userId: userId,
+        username: credential.username,
         role: credential.user.role,
         verificationSession: true,
         email: credential.email,
@@ -42,7 +42,7 @@ async function verifyRoute(req: NextApiRequest, res: NextApiResponse) {
       })
       res.redirect(`/verified`);
     }
-    
+
   } else {
     res.status(400).send("Unexpected query param.");
   }

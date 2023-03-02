@@ -1,6 +1,6 @@
+import { generateMagicLink, generateVerificationLink, withSessionRoute } from "@lib/ironSession";
 import prisma from "@lib/prisma";
 import { sendMagicLinkEmail, sendVerificationEmail } from "@lib/sendgrid";
-import { generateMagicLink, generateVerificationLink, withSessionRoute } from "@lib/withSession";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default withSessionRoute(sendEmailRoute);

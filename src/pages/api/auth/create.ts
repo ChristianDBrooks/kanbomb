@@ -1,6 +1,6 @@
+import { generateVerificationLink, saveSession, withSessionRoute } from "@lib/ironSession";
 import prisma from "@lib/prisma";
 import { sendVerificationEmail } from "@lib/sendgrid";
-import { generateVerificationLink, saveSession, withSessionRoute } from "@lib/withSession";
 import bcrypt from "bcrypt";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -32,7 +32,7 @@ async function createCredentialRoute(
         email,
       },
     });
-        
+
     // If username or email already exist return error.
     if (usernameExists || emailExists) {
       res.status(409).json("Username or email already exists.");
@@ -63,10 +63,10 @@ async function createCredentialRoute(
           user: true
         }
       });
-      
+
       if (credential) await saveSession(req.session, {
-        userId: credential.userId, 
-        username: credential.username, 
+        userId: credential.userId,
+        username: credential.username,
         role: credential.user.role,
         email: credential.email,
         verified: credential.verified,

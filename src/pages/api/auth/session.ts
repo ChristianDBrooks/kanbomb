@@ -1,4 +1,4 @@
-import { withSessionRoute } from "@lib/withSession";
+import { withSessionRoute } from "@lib/ironSession";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default withSessionRoute(getSession);

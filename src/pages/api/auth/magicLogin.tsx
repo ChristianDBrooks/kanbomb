@@ -1,6 +1,6 @@
 
+import { saveSession, withSessionRoute } from "@lib/ironSession";
 import prisma from "@lib/prisma";
-import { saveSession, withSessionRoute } from "@lib/withSession";
 import { unsealData } from "iron-session";
 import { NextApiRequest, NextApiResponse } from "next";
 

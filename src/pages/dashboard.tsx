@@ -1,14 +1,14 @@
-import { withSessionSsr } from "@lib/withSession";
+import { withSessionSsr } from "@lib/ironSession";
 import { Container, List, ListItem, Typography } from "@mui/material";
 import { IronSessionData } from "iron-session";
 import { withAuthenticationGuard } from "src/helpers/guards";
 
 export const getServerSideProps = withSessionSsr(
-  function getServerSideProps({ req }) {
-    return withAuthenticationGuard(req, () => {
+  function getServerSideProps(ctx) {
+    return withAuthenticationGuard(ctx, () => {
       return {
         props: {
-          user: req.session.user
+          user: ctx.req.session.user
         }
       }
     });

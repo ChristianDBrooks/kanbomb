@@ -50,7 +50,7 @@ export function withSessionSsr<
 /* Function used to create a new session or modify an existing session. */
 export async function saveSession(session: IronSession, user: IronSessionData["user"]) {
   if (!session) return;
-  session.user = user
+  session.user = user;
   await session.save()
 }
 
@@ -72,7 +72,8 @@ export async function generateMagicLink(user: User) {
 
 /* Function used to generate verifcation links for the provided user. */
 export async function generateVerificationLink(user: User) {
-  const host = process.env.EMAIL_REDIRECT_URI;
+  const host = process.env.NODE_ENV === "production" ? process.env.VERCEL_URL : process.env.EMAIL_REDIRECT_URI;
+  if (!host) console.error("Could not get host for verication link generation.")
   const twentyFourHoursInSeconds = 60 * 60 * 24;
   const seal = await sealData(
     {

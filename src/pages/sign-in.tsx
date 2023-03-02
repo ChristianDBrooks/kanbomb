@@ -25,9 +25,9 @@ export default function SignInPage() {
       body: JSON.stringify(Object.fromEntries(data.entries()))
     });
 
+    const res = await authenticationResponse.json()
     if (!authenticationResponse.ok) {
-      const res = await authenticationResponse.json()
-      console.error(res.message);
+      console.error(res.data);
       return;
     }
     route.push('/dashboard')

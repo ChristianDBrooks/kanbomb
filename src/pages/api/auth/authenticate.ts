@@ -1,5 +1,5 @@
+import { saveSession, withSessionRoute } from "@lib/ironSession";
 import prisma from "@lib/prisma";
-import { saveSession, withSessionRoute } from "@lib/withSession";
 import bcrypt from "bcrypt";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -47,8 +47,8 @@ async function authenticateCredentialRoute(
       // If they match return create a session
       if (result) {
         if (credential) await saveSession(req.session, {
-          userId: credential.userId, 
-          username: credential.username, 
+          userId: credential.userId,
+          username: credential.username,
           role: credential.user.role,
           email: credential.email,
           verified: credential.verified,

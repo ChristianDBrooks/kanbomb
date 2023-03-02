@@ -1,13 +1,13 @@
-import { withSessionSsr } from "@lib/withSession";
+import { withSessionSsr } from "@lib/ironSession";
 import CheckIcon from "@mui/icons-material/CheckCircle";
 import { Avatar, Box, Link, Typography } from "@mui/material";
 import NextLink from "next/link";
 import { withAuthenticationGuard } from "src/helpers/guards";
 
 export const getServerSideProps = withSessionSsr(
-  async function getServerSideProps({ req }) {
-    return withAuthenticationGuard(req, () => {      
-      if (!req.session.user?.verificationSession) {
+  async function getServerSideProps(ctx) {
+    return withAuthenticationGuard(ctx, () => {      
+      if (!ctx.req.session.user?.verificationSession) {
         return {
           redirect: {
             destination: '/dashboard',

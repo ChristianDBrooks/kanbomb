@@ -58,7 +58,7 @@ export default function ForgotPassword() {
         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
           <LockResetIcon />
         </Avatar>
-        <Typography component="h1" variant="h5">
+        <Typography component="h1" variant="h5" mb={3}>
           Forgot password
         </Typography>
         <Typography component="p">Enter the email associated with your account and if the email is in our records we will send you a magic link.

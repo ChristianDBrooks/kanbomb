@@ -5,26 +5,59 @@ import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
-import CssBaseline from '@mui/material/CssBaseline'
 import Grid from '@mui/material/Grid'
 import Link from '@mui/material/Link'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
-import * as React from 'react'
-import { useState } from 'react'
+import { FormEvent, useState } from 'react'
+
+interface SignInElements extends HTMLFormControlsCollection {
+  email: HTMLInputElement;
+  username: HTMLInputElement;
+  password: HTMLInputElement;
+}
+
+interface SignInFormElement extends HTMLFormElement {
+  readonly elements: SignInElements;
+}
 
 export default function SignUpPage() {
   const route = useRouter();
   const { controller, message } = useMessageController();
   const [loading, setLoading] = useState(false)
+  const [usernameErrorText, setUsernameErrorText] = useState('')
+  const [emailErrorText, setEmailErrorText] = useState('')
+  const [passwordErrorText, setPasswordErrorText] = useState('')
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    setLoading(true);
+  const clearFormErrors = () => {
+    setUsernameErrorText('');
+    setEmailErrorText('');
+    setPasswordErrorText('');
+  }
+
+  const validatePassword = (value?: string) => {
+    if (!value) return 'Password is required.'
+    if (value.length < 8) return 'Password must be at least 8 characters.'
+    if (value.search(/[A-Z]/) === -1) return 'Password must have at least 1 capital letter.'
+  }
+
+  const handleSubmit = async (event: FormEvent<SignInFormElement>) => {
+    clearFormErrors();
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
+    const { email, username, password } = event.currentTarget.elements;
+
+    const validationError = validatePassword(password.value);
+
+    if (validationError) {
+      setPasswordErrorText(validationError);
+      return;
+    }
+
+    setLoading(true);
     const creationResponse = await fetch('/api/auth/create', {
       headers: { 'content-type': 'application/json' },
       method: 'POST',
@@ -32,8 +65,21 @@ export default function SignUpPage() {
     });
 
     if (!creationResponse.ok) {
-      const text = await creationResponse.text()
-      console.error(text);
+      const text = await creationResponse.text() || 'Something went wrong.'
+
+      if (creationResponse.status === 409) {
+        const lcText = text.toLocaleLowerCase();
+        if (lcText.includes('username')) {
+          setUsernameErrorText(text);
+        }
+        if (lcText.includes('email')) {
+          setEmailErrorText(text);
+        }
+        setLoading(false);
+        return;
+      }
+
+      console.error(creationResponse.status + ' ' + creationResponse.statusText);
       message(text, 'error')
       setLoading(false);
       return;
@@ -48,7 +94,6 @@ export default function SignUpPage() {
     <Container component="main" maxWidth="xs">
       <ControlledMessage controller={controller} />
       <Loading open={loading} />
-      <CssBaseline />
       <Box
         sx={{
           marginTop: 8,
@@ -65,6 +110,9 @@ export default function SignUpPage() {
         </Typography>
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
           <TextField
+            error={!!emailErrorText}
+            helperText={emailErrorText}
+            onChange={() => setEmailErrorText('')}
             type="email"
             margin="normal"
             required
@@ -76,6 +124,9 @@ export default function SignUpPage() {
             autoFocus
           />
           <TextField
+            error={!!usernameErrorText}
+            helperText={usernameErrorText}
+            onChange={() => setUsernameErrorText('')}
             margin="normal"
             required
             fullWidth
@@ -86,6 +137,9 @@ export default function SignUpPage() {
             autoFocus
           />
           <TextField
+            error={!!passwordErrorText}
+            helperText={passwordErrorText}
+            onChange={() => setPasswordErrorText('')}
             margin="normal"
             required
             fullWidth

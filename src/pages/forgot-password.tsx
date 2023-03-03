@@ -1,7 +1,7 @@
 import ControlledMessage, { useMessageController } from '@components/ControlledMessage';
 import Loading from '@components/Loading';
 import LockResetIcon from '@mui/icons-material/LockReset';
-import { Avatar, Box, Button, Container, CssBaseline, Grid, Link, TextField, Typography } from "@mui/material";
+import { Avatar, Box, Button, Container, Grid, Link, TextField, Typography } from "@mui/material";
 import NextLink from 'next/link';
 import { FormEvent, useState } from 'react';
 
@@ -49,7 +49,6 @@ export default function ForgotPassword() {
     <Container component="main" maxWidth="xs">
       <ControlledMessage controller={controller} />
       <Loading open={loading} />
-      <CssBaseline />
       <Box
         sx={{
           marginTop: 8,

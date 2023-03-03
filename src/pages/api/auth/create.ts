@@ -15,7 +15,7 @@ async function createCredentialRoute(
 
     // Validate username and password
     if (!username || !password || !email) {
-      res.status(400).json("You must provide username, email, and password!");
+      res.status(400).send("You must provide username, email, and password!");
       return;
     }
 
@@ -34,8 +34,14 @@ async function createCredentialRoute(
     });
 
     // If username or email already exist return error.
-    if (usernameExists || emailExists) {
-      res.status(409).json("Username or email already exists.");
+    if (emailExists) {
+      res.status(409).send("Email already exists.");
+      return;
+    }
+
+    // If username or email already exist return error.
+    if (usernameExists) {
+      res.status(409).send("Username already exists.");
       return;
     }
 

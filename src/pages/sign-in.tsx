@@ -4,10 +4,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Checkbox from '@mui/material/Checkbox'
 import Container from '@mui/material/Container'
-import CssBaseline from '@mui/material/CssBaseline'
-import FormControlLabel from '@mui/material/FormControlLabel'
 import Grid from '@mui/material/Grid'
 import Link from '@mui/material/Link'
 import TextField from '@mui/material/TextField'
@@ -19,12 +16,14 @@ import { useState } from 'react'
 
 export default function SignInPage() {
   const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState(false);
   const route = useRouter()
   const { controller, message } = useMessageController();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     setLoading(true);
     event.preventDefault();
+
     const data = new FormData(event.currentTarget);
     const authenticationResponse = await fetch('/api/auth/authenticate', {
       headers: { 'content-type': 'application/json' },
@@ -32,15 +31,14 @@ export default function SignInPage() {
       body: JSON.stringify(Object.fromEntries(data.entries()))
     });
 
-    const result = await authenticationResponse;
-    const text = await result.text();
+    const text = await authenticationResponse.text();
     if (!authenticationResponse.ok) {
       setLoading(false);
       message(text, 'error');
       console.error(text);
       return;
     }
-    message('Sign in succesful!', 'success');
+    message('Sign in successful!', 'success');
     setLoading(false);
     route.push('/dashboard')
   };
@@ -49,7 +47,6 @@ export default function SignInPage() {
     <Container component="main" maxWidth="xs">
       <ControlledMessage controller={controller} />
       <Loading open={loading} />
-      <CssBaseline />
       <Box
         sx={{
           marginTop: 8,
@@ -67,27 +64,23 @@ export default function SignInPage() {
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
           <TextField
             margin="normal"
-            required
             fullWidth
             id="username"
             label="Username"
             name="username"
             autoComplete="username"
+            required
             autoFocus
           />
           <TextField
             margin="normal"
-            required
             fullWidth
             name="password"
             label="Password"
             type="password"
             id="password"
             autoComplete="current-password"
-          />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
+            required
           />
           <Button
             type="submit"

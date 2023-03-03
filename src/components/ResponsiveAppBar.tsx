@@ -23,15 +23,15 @@ import SignOut from './SignOut';
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-  const {session} = useIronSession() as {session: IronSession};
+  const { session } = useIronSession() as { session: IronSession };
   const theme = useTheme();
   const router = useRouter();
   const authenticated = !!session?.user;
   const pages = authenticated ? [
-    {text: 'Home', path: '/'}, 
-    {text: 'Dashboard', path: '/dashboard'}
+    { text: 'Home', path: '/' },
+    { text: 'Dashboard', path: '/dashboard' }
   ] : [
-    {text: 'Home', path: '/'}, 
+    { text: 'Home', path: '/' },
   ];
   const settings = ['Profile'];
 
@@ -53,11 +53,11 @@ function ResponsiveAppBar() {
 
   return (
     <AppBar position="sticky">
-      <Container maxWidth="xl">
+      <Container maxWidth="lg">
         <Toolbar disableGutters>
-          <Box 
+          <Box
             sx={{
-              display: {xs: 'none', md: 'flex'},
+              display: { xs: 'none', md: 'flex' },
               mr: 2
             }}
           >
@@ -67,7 +67,7 @@ function ResponsiveAppBar() {
                 justifyContent: 'center'
               }}
             >
-              <Image src='./dt-logo.svg' width={100} height={32} alt=''/>
+              <Image src='./dt-logo.svg' width={100} height={32} alt='' />
             </Link>
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -100,7 +100,7 @@ function ResponsiveAppBar() {
               }}
             >
               {pages.map((page) => (
-                <Link key={page.text} href={page.path} style={{textDecoration: 'none', color: theme.palette.text.primary}}>
+                <Link key={page.text} href={page.path} style={{ textDecoration: 'none', color: theme.palette.text.primary }}>
                   <MenuItem onClick={handleCloseNavMenu}>
                     <Typography textAlign="center">{page.text}</Typography>
                   </MenuItem>
@@ -120,17 +120,17 @@ function ResponsiveAppBar() {
               textDecoration: 'none',
             }}
           >
-            <Image src='./dt-logo.svg' width={100} height={64} alt=''/>
+            <Image src='./dt-logo.svg' width={100} height={64} alt='' />
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Link
                 key={page.text}
                 onClick={handleCloseNavMenu}
-                style={{ 
-                  marginInline: '.5rem', 
+                style={{
+                  marginInline: '.5rem',
                   color: theme.palette.text.primary,
-                  display: 'block' ,
+                  display: 'block',
                   textDecoration: 'none'
                 }}
                 href={page.path}
@@ -162,7 +162,7 @@ function ResponsiveAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <Link key={setting} href={'/'+setting.toLowerCase()} style={{textDecoration: 'none', color: theme.palette.text.primary}}>
+                <Link key={setting} href={'/' + setting.toLowerCase()} style={{ textDecoration: 'none', color: theme.palette.text.primary }}>
                   <MenuItem onClick={handleCloseUserMenu}>
                     <Typography textAlign="center">{setting}</Typography>
                   </MenuItem>
@@ -177,7 +177,7 @@ function ResponsiveAppBar() {
               <IconButton onClick={() => router.push('/sign-in')} title="Sign In">
                 <AccountCircleIcon />
               </IconButton>
-          </Box>
+            </Box>
           )}
         </Toolbar>
       </Container>

@@ -1,13 +1,17 @@
 import { GetServerSidePropsContext, PreviewData } from "next";
 import { ParsedUrlQuery } from "querystring";
 
-export async function withAuthenticationGuard( 
+/** Current Guard Flow 
+ * No User (session)        -->   /sign-in
+ * Not Verified (session)   -->   /not-verified
+*/
+export async function withAuthenticationGuard(
   ctx: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>,
   ssrWork?: Function
 ) {
   const user = ctx.req?.session?.user;
   const url = ctx?.resolvedUrl;
-  
+
   console.log('gaurds: routing -', url);
   if (!user) {
     console.log('guards: redirecting - /sign-in');
@@ -18,7 +22,7 @@ export async function withAuthenticationGuard(
       },
     };
   }
-  
+
   if (!url.endsWith('/not-verified') && !user.verified) {
     console.log('guards: redirecting - /not-verified');
     return {
@@ -30,5 +34,5 @@ export async function withAuthenticationGuard(
   }
 
   const ssrWorkReturn = ssrWork && ssrWork();
-  return ssrWorkReturn ?? { props: {}};
+  return ssrWorkReturn ?? { props: {} };
 }

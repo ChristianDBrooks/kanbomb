@@ -1,3 +1,5 @@
+import ControlledMessage, { useMessageController } from '@components/ControlledMessage'
+import Loading from '@components/Loading'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
@@ -11,27 +13,41 @@ import Typography from '@mui/material/Typography'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import * as React from 'react'
+import { useState } from 'react'
 
 export default function SignUpPage() {
   const route = useRouter();
+  const { controller, message } = useMessageController();
+  const [loading, setLoading] = useState(false)
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    setLoading(true);
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+
     const creationResponse = await fetch('/api/auth/create', {
-      headers: {'content-type': 'application/json'},
+      headers: { 'content-type': 'application/json' },
       method: 'POST',
       body: JSON.stringify(Object.fromEntries(data.entries()))
     });
+
     if (!creationResponse.ok) {
-      const res = await creationResponse.json()
-      console.error(res.message);
+      const text = await creationResponse.text()
+      console.error(text);
+      message(text, 'error')
+      setLoading(false);
       return;
     }
+
+    setLoading(false);
+    message("Account creation successful! You are signed in!", 'success')
     route.push('/dashboard')
   };
 
   return (
     <Container component="main" maxWidth="xs">
+      <ControlledMessage controller={controller} />
+      <Loading open={loading} />
       <CssBaseline />
       <Box
         sx={{

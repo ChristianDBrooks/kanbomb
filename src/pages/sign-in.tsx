@@ -1,3 +1,5 @@
+import ControlledMessage, { useMessageController } from '@components/ControlledMessage'
+import Loading from '@components/Loading'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
@@ -13,10 +15,15 @@ import Typography from '@mui/material/Typography'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import * as React from 'react'
+import { useState } from 'react'
 
 export default function SignInPage() {
+  const [loading, setLoading] = useState(false);
   const route = useRouter()
+  const { controller, message } = useMessageController();
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    setLoading(true);
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const authenticationResponse = await fetch('/api/auth/authenticate', {
@@ -25,16 +32,23 @@ export default function SignInPage() {
       body: JSON.stringify(Object.fromEntries(data.entries()))
     });
 
-    const res = await authenticationResponse.json()
+    const result = await authenticationResponse;
+    const text = await result.text();
     if (!authenticationResponse.ok) {
-      console.error(res.data);
+      setLoading(false);
+      message(text, 'error');
+      console.error(text);
       return;
     }
+    message('Sign in succesful!', 'success');
+    setLoading(false);
     route.push('/dashboard')
   };
 
   return (
     <Container component="main" maxWidth="xs">
+      <ControlledMessage controller={controller} />
+      <Loading open={loading} />
       <CssBaseline />
       <Box
         sx={{

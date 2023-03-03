@@ -28,7 +28,7 @@ async function sendEmailRoute(
     res.status(404).send(`The path ${req.url} does not exist on the server.`)
     return;
   }
-  
+
   res.status(404).send(`The request method is not supported. Only "POST" requests are supported.`)
 }
 
@@ -37,7 +37,7 @@ async function magicLinkController(req: NextApiRequest, res: NextApiResponse) {
 
   // Validate username and password
   if (!email) {
-    res.status(400).json("You must provide email!");
+    res.status(400).send("You must provide email!");
     return;
   }
 

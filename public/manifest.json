@@ -7,6 +7,11 @@
   "orientation": "portrait",
   "scope": "/",
   "start_url": "/",
+  "launch_handler": { 
+    "route_to": "existing-client-navigate" 
+  },
+  "handle_links": {
+  },
   "icons": [
     {
         "src": "/icons/icon-192x192.png",

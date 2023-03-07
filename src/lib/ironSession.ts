@@ -22,6 +22,8 @@ import {
   NextApiHandler
 } from "next";
 
+const host = process.env.NODE_ENV === "production" ? process.env.VERCEL_URL : process.env.EMAIL_REDIRECT_URI;
+
 export const sessionOptions = {
   password: process.env.IRON_SESSION_PASSWORD!,
   cookieName: "next_starter_iron_session",
@@ -56,7 +58,7 @@ export async function saveSession(session: IronSession, user: IronSessionData["u
 
 /* Function used to generate magic links for the provided user. */
 export async function generateMagicLink(user: User) {
-  const host = process.env.EMAIL_REDIRECT_URI
+  if (!host) console.error("Could not get host for magic link generation.")
   const fifteenMinutesInSeconds = 15 * 60;
   const seal = await sealData(
     {
@@ -72,7 +74,6 @@ export async function generateMagicLink(user: User) {
 
 /* Function used to generate verifcation links for the provided user. */
 export async function generateVerificationLink(user: User) {
-  const host = process.env.NODE_ENV === "production" ? process.env.VERCEL_URL : process.env.EMAIL_REDIRECT_URI;
   if (!host) console.error("Could not get host for verication link generation.")
   const twentyFourHoursInSeconds = 60 * 60 * 24;
   const seal = await sealData(

@@ -1,11 +1,22 @@
 # NextJS DuoTech Kit
 
 ## Quickstart 
-1. Run `npm install`
-2. Setup Authentication
-2. Setup Prisma.
-3. Setup Stripe.
-4. Run `npm run dev`
+1. Clone this repo 
+```
+git clone https://github.com/christian-duotech/nextjs-starter.git <repository>
+```
+2. Create new repo
+3. Remove the nextjs-starter remotes to your new project, and add the new repo.
+```
+git remote remove origin
+git remote add origin https://github.com/<username>/<repository>.git 
+```
+4. Run `npm install`
+5. Setup [Authentication](#setup-authentication)
+6. Setup [Prisma](#setup-prisma).
+7. Setup [Stripe](#setup-stripe).
+7. Setup [PWA](#setup-pwa).
+8. Run `npm run dev`
 
 ## Setup Authentication
 1. Set the `IRON_SESSION_PASSWORD` in `.env`.
@@ -20,6 +31,9 @@
 
 ## Setup Stripe
 1. Set the `STRIPE_SECRET_KEY` in the `.env` file to point to your test environment Stripe key.
+
+## Setup PWA
+1. You will want to modify `manifest.json` to match your new project name, and the data in the HTML meta tags in `_app.tsx`.
 
 ## Kit Includes
 * Material UI

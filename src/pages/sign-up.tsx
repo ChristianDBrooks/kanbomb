@@ -87,7 +87,7 @@ export default function SignUpPage() {
 
     setLoading(false);
     message("Account creation successful! You are signed in!", 'success')
-    route.push('/dashboard')
+    route.push('/')
   };
 
   return (

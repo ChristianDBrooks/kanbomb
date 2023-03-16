@@ -34,7 +34,7 @@ export const getServerSideProps = withSessionSsr(
 
         return {
           redirect: {
-            destination: '/dashboard',
+            destination: '/',
             permanent: false
           }
         }

@@ -1,6 +1,21 @@
-import { Container, List, ListItem, Typography } from "@mui/material";
+import { withSessionSsr } from "@lib/ironSession";
+import { Container, Typography } from "@mui/material";
+import { IronSessionData } from "iron-session";
+import { withAuthenticationGuard } from "src/helpers/guards";
 
-export default function Home() {
+export const getServerSideProps = withSessionSsr(
+  function getServerSideProps(ctx) {
+    return withAuthenticationGuard(ctx, () => {
+      return {
+        props: {
+          user: ctx.req.session.user
+        }
+      }
+    });
+  },
+);
+
+export default function dashboardPage({ user }: { user: IronSessionData["user"] }) {
   return (<>
     <div style={{
       backgroundImage: 'url(dashboard.jpg)',
@@ -29,29 +44,18 @@ export default function Home() {
             maxWidth: 500
           }}
         >
-          Welcome to Catalyst.
+          This is The Dashboard.
         </Typography>
-        <Typography component="h2" variant="subtitle1">A NextJS Starter Kit</Typography>
+        <Typography
+          component="h2"
+          variant="subtitle1"
+        >
+          A place where users can do something in the app. It represents the endless possiblities of what can be.
+        </Typography>
       </Container>
     </div>
     <Container sx={{ marginTop: 6 }}>
-      <Typography variant="h5">What is Catalyst?</Typography>
-      <Typography>Catalyst is a batteries included starter kit built on NextJS with many fundamental features already included that a full stack web application will require.</Typography>
-    </Container>
-    <Container sx={{ marginTop: 4 }}>
-      <Typography variant="h5">Catalyst Feature List</Typography>
-      <List>
-        <ListItem>NextJS</ListItem>
-        <ListItem>Authentication</ListItem>
-        <ListItem>User Sessions</ListItem>
-        <ListItem>Magic Links</ListItem>
-        <ListItem>Prisma with PostgreSQL</ListItem>
-        <ListItem>SWR</ListItem>
-        <ListItem>Material UI</ListItem>
-        <ListItem>Email API {'(SendGrid)'}</ListItem>
-        <ListItem>Payment API {'(Stripe)'}</ListItem>
-        <ListItem>Progressive Web App Ready</ListItem>
-      </List>
+      <Typography>What will you put in the blank canvas?</Typography>
     </Container>
   </>
   )

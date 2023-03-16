@@ -19,6 +19,10 @@ import { useRouter } from 'next/router';
 import * as React from 'react';
 import SignOut from './SignOut';
 
+interface Page {
+  text: string;
+  path: string;
+}
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -27,12 +31,9 @@ function ResponsiveAppBar() {
   const theme = useTheme();
   const router = useRouter();
   const authenticated = !!session?.user;
-  const pages = authenticated ? [
-    { text: 'Home', path: '/' },
-    { text: 'Dashboard', path: '/dashboard' }
-  ] : [
-    { text: 'Home', path: '/' },
-  ];
+  const pages: Page[] = authenticated ? [
+    { text: 'My Board', path: '/' },
+  ] : [];
   const settings = ['Profile'];
 
 
@@ -64,10 +65,11 @@ function ResponsiveAppBar() {
             <Link href='/'
               style={{
                 display: 'flex',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                textDecoration: 'none',
               }}
             >
-              <Image src='./dt-logo.svg' width={100} height={32} alt='' />
+              <Typography fontSize='1.5rem' fontWeight='700'>KanBomb</Typography>
             </Link>
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>

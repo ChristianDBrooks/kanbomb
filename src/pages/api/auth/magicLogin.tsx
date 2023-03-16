@@ -28,15 +28,15 @@ async function magicLoginRoute(req: NextApiRequest, res: NextApiResponse) {
 
     if (credential) {
       await saveSession(req.session, {
-        userId: userId, 
-        username: credential.username, 
+        userId: userId,
+        username: credential.username,
         role: credential.user.role,
         email: credential.email,
         verified: credential.verified,
       })
-      res.redirect(`/dashboard`);
+      res.redirect(`/`);
     }
-    
+
   } else {
     res.status(400).send("Unexpected query param.");
   }

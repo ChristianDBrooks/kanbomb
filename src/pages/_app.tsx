@@ -23,11 +23,11 @@ export default function MyApp(props: MyAppProps) {
           name='viewport'
           content='minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover'
         />
-        <meta name="application-name" content="Project Catalyst" />
+        <meta name="application-name" content="KanBomb" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Project Catalyst" />
-        <meta name="description" content="A NextJS Starter App to Build Anything" />
+        <meta name="apple-mobile-web-app-title" content="KanBomb" />
+        <meta name="description" content="A bomb kanban task list!" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-config" content="/icons/browserconfig.xml" />
@@ -47,17 +47,17 @@ export default function MyApp(props: MyAppProps) {
         <link rel="shortcut icon" href="/favicon.ico" />
 
         <meta name="twitter:card" content="summary" />
-        <meta name="twitter:url" content="https://project-catalyst.vercel.app" />
+        {/* <meta name="twitter:url" content="https://project-catalyst.vercel.app" /> */}
         <meta name="twitter:title" content="Catalyst" />
-        <meta name="twitter:description" content="The Best NextJS Starter App" />
-        <meta name="twitter:image" content="https://project-catalyst.vercel.app/icons/android-chrome-192x192.png" />
+        <meta name="twitter:description" content="A bomb kanban task list!" />
+        {/* <meta name="twitter:image" content="https://project-catalyst.vercel.app/icons/android-chrome-192x192.png" /> */}
         <meta name="twitter:creator" content="@duotech" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Catalyst" />
-        <meta property="og:description" content="The Best NextJS Starter App" />
-        <meta property="og:site_name" content="Catalyst" />
-        <meta property="og:url" content="https://project-catalyst.vercel.app" />
-        <meta property="og:image" content="https://project-catalyst.vercel.app/icons/apple-touch-icon.png" />
+        <meta property="og:description" content="A bomb kanban task list!" />
+        <meta property="og:site_name" content="KanBomb" />
+        {/* <meta property="og:url" content="https://project-catalyst.vercel.app" /> */}
+        {/* <meta property="og:image" content="https://project-catalyst.vercel.app/icons/apple-touch-icon.png" /> */}
 
         {/* <link rel='apple-touch-startup-image' href='/images/apple_splash_2048.png' sizes='2048x2732' />
 <link rel='apple-touch-startup-image' href='/images/apple_splash_1668.png' sizes='1668x2224' />

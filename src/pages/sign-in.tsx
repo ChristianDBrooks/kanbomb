@@ -40,7 +40,7 @@ export default function SignInPage() {
     }
     message('Sign in successful!', 'success');
     setLoading(false);
-    route.push('/dashboard')
+    route.push('/')
   };
 
   return (

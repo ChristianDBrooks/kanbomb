@@ -10,7 +10,7 @@ export const getServerSideProps = withSessionSsr(
       if (!ctx.req.session.user?.verificationSession) {
         return {
           redirect: {
-            destination: '/dashboard',
+            destination: '/',
             permanent: false
           },
         };
@@ -33,7 +33,7 @@ function VerifiedPage() {
         <CheckIcon />
       </Avatar>
       <Typography component="p">Thanks, your email has been successfully verified!</Typography>
-      <Link component={NextLink} href="/dashboard" variant="body2">
+      <Link component={NextLink} href="/" variant="body2">
         {"Go to Dashboard"}
       </Link>
     </Box>

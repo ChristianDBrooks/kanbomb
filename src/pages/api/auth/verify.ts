@@ -3,6 +3,7 @@ import { saveSession, withSessionRoute } from "@lib/ironSession";
 import prisma from "@lib/prisma";
 import { unsealData } from "iron-session";
 import { NextApiRequest, NextApiResponse } from "next";
+import { handleDatabaseError } from "src/helpers/database";
 
 export default withSessionRoute(verifyRoute);
 
@@ -29,8 +30,6 @@ async function verifyRoute(req: NextApiRequest, res: NextApiResponse) {
       }
     })
 
-    console.log("verified credential", credential)
-
     if (credential) {
       await saveSession(req.session, {
         userId: userId,
@@ -40,6 +39,36 @@ async function verifyRoute(req: NextApiRequest, res: NextApiResponse) {
         email: credential.email,
         verified: credential.verified,
       })
+
+      try {
+
+        const boardWithUser = await prisma.board.create({
+          data: {
+            userId: credential.user.id,
+            title: 'New Board',
+            taskLists: {
+              create: {
+                title: 'New TaskList',
+                tasks: {
+                  create:
+                    [
+                      {
+                        text: 'Something to do.'
+                      },
+                      {
+                        text: 'Something already done!',
+                        complete: true
+                      },
+                    ]
+                }
+              }
+            }
+          }
+        })
+      } catch (error) {
+        handleDatabaseError(error, res)
+      }
+
       res.redirect(`/verified`);
     }
 

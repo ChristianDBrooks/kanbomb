@@ -1,62 +1,146 @@
+import BoardList from "@components/BoardList";
+import ControlledMessage, { useMessageController } from "@components/ControlledMessage";
 import { withSessionSsr } from "@lib/ironSession";
-import { Container, Typography } from "@mui/material";
-import { IronSessionData } from "iron-session";
+import prisma from "@lib/prisma";
+import AddIcon from '@mui/icons-material/Add';
+import { Box, colors, Container, Stack, Typography } from "@mui/material";
+import { Board, Task, TaskList } from "@prisma/client";
+import { useState } from "react";
 import { withAuthenticationGuard } from "src/helpers/guards";
+
+type BoardsWithTaskListsWithTasks = (Board & {
+  taskLists: (TaskList & {
+    tasks: Task[];
+  })[];
+})[]
 
 export const getServerSideProps = withSessionSsr(
   function getServerSideProps(ctx) {
-    return withAuthenticationGuard(ctx, () => {
+    return withAuthenticationGuard(ctx, async () => {
+
+      const boards = await prisma.board.findMany({
+        where: {
+          userId: ctx.req.session.user?.userId
+        },
+        include: {
+          taskLists: {
+            include: {
+              tasks: true
+            }
+          }
+        }
+      })
+
       return {
         props: {
-          user: ctx.req.session.user
+          boards
         }
       }
     });
   },
 );
 
-export default function dashboardPage({ user }: { user: IronSessionData["user"] }) {
-  return (<>
-    <div style={{
-      backgroundImage: 'url(dashboard.jpg)',
-      backgroundPosition: 'center',
-      WebkitBackgroundSize: 'cover',
-      backgroundSize: 'cover',
-      WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 80%, rgba(0,0,0,0))",
-      maskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 80%, rgba(0,0,0,0))"
-    }}
-    >
-      <Container
-        maxWidth="lg"
-        sx={{
-          minHeight: [300, 400],
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center'
-        }}
-      >
-        <Typography
-          component="h1"
-          variant="h2"
-          sx={{
-            fontWeight: 700,
-            textAlign: 'left',
-            maxWidth: 500
-          }}
-        >
-          This is The Dashboard.
-        </Typography>
-        <Typography
-          component="h2"
-          variant="subtitle1"
-        >
-          A place where users can do something in the app. It represents the endless possiblities of what can be.
+export default function DashboardPage({ boards: inititalBoards }: { boards: BoardsWithTaskListsWithTasks }) {
+  console.log('initialBoards', inititalBoards)
+  const [boards, setBoards] = useState(inititalBoards);
+  const [activeBoardId, setActiveBoardId] = useState(boards?.[0]?.id)
+  const activeBoard = boards?.find((board) => board.id === activeBoardId)
+  const { message, controller } = useMessageController();
+
+  const handleAddTaskList = async () => {
+    const addTaskListResponse = await fetch('/api/tasklist', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        boardId: activeBoardId
+      })
+    })
+
+    if (!addTaskListResponse.ok) {
+      message('Failed to add task list!', 'error')
+      return;
+    }
+
+    const result: {
+      data: {
+        boards: BoardsWithTaskListsWithTasks
+      }
+    } = await addTaskListResponse.json();
+    setBoards(result.data.boards)
+  }
+
+  const handleDeleteTaskList = async (id: string) => {
+    const deleteTaskListResponse = await fetch('/api/tasklist', {
+      method: "DELETE",
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        taskListId: id
+      })
+    })
+
+
+    if (!deleteTaskListResponse.ok) {
+      message('Failed to delete task list!', 'error')
+      return;
+    }
+
+    const result: {
+      data: {
+        boards: BoardsWithTaskListsWithTasks
+      }
+    } = await deleteTaskListResponse.json();
+    setBoards(result.data.boards)
+  }
+
+  if (!activeBoard) {
+    return (
+      <Container sx={{
+        padding: 2,
+        minHeight: 'calc(100vh - 64px)'
+      }}>
+        <Typography>
+          You have no boards. Create one!
         </Typography>
       </Container>
-    </div>
-    <Container sx={{ marginTop: 6 }}>
-      <Typography>What will you put in the blank canvas?</Typography>
+    )
+  }
+
+  return (
+    <Container sx={{
+      minHeight: 'calc(100vh - 64px)',
+    }}>
+      <Box overflow='auto'>
+        <ControlledMessage controller={controller} />
+        <Typography
+          variant="h4"
+          paddingY={2}
+        >{activeBoard.title}</Typography>
+        <Stack direction="row" gap={2}>
+          {
+            activeBoard.taskLists.map(taskList => <BoardList
+              key={taskList.id}
+              taskList={taskList}
+              deleteList={handleDeleteTaskList}
+            />)
+          }
+          <Box
+            onClick={() => handleAddTaskList()}
+            sx={{
+              background: colors.grey[800],
+              padding: 2,
+              borderRadius: '4px',
+              minWidth: 300,
+              cursor: 'pointer',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <AddIcon />
+            Add new list
+          </Box>
+        </Stack>
+      </Box>
     </Container>
-  </>
   )
 }

@@ -14,7 +14,6 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { IronSession } from 'iron-session';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import * as React from 'react';
 import SignOut from './SignOut';
@@ -53,7 +52,7 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="sticky">
+    <AppBar position="static">
       <Container maxWidth="lg">
         <Toolbar disableGutters>
           <Box
@@ -122,7 +121,7 @@ function ResponsiveAppBar() {
               textDecoration: 'none',
             }}
           >
-            <Image src='./dt-logo.svg' width={100} height={64} alt='' />
+            <Typography fontSize='1.5rem' fontWeight='700'>KanBomb</Typography>
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (

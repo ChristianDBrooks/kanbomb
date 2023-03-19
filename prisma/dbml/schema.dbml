@@ -7,6 +7,7 @@ Table User {
   name String
   role Role [not null, default: 'USER']
   credential Credential
+  boards Board [not null]
 }
 
 Table Credential {
@@ -19,9 +20,39 @@ Table Credential {
   user User [not null]
 }
 
+Table Board {
+  id String [pk]
+  title String [not null]
+  taskLists TaskList [not null]
+  userId String [not null]
+  user User [not null]
+}
+
+Table TaskList {
+  id String [pk]
+  title String [not null]
+  tasks Task [not null]
+  boardId String [not null]
+  board Board [not null]
+}
+
+Table Task {
+  id String [pk]
+  complete Boolean [not null, default: false]
+  text String [not null]
+  taskListId String [not null]
+  taskList TaskList [not null]
+}
+
 Enum Role {
   USER
   ADMIN
 }
 
 Ref: Credential.userId - User.id
+
+Ref: Board.userId > User.id [delete: Cascade]
+
+Ref: TaskList.boardId > Board.id [delete: Cascade]
+
+Ref: Task.taskListId > TaskList.id [delete: Cascade]

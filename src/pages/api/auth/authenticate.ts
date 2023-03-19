@@ -1,7 +1,9 @@
 import { saveSession, withSessionRoute } from "@lib/ironSession";
 import prisma from "@lib/prisma";
+import { Credential, User } from "@prisma/client";
 import bcrypt from "bcrypt";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { handleDatabaseError } from "src/helpers/database";
 
 
 export default withSessionRoute(authenticateCredentialRoute);
@@ -18,15 +20,20 @@ async function authenticateCredentialRoute(
       return;
     }
 
+    let credential!: (Credential & { user: User; }) | null;
     // Check if credential with username exists in database, if not return null
-    const credential = await prisma.credential.findUnique({
-      where: {
-        username,
-      },
-      include: {
-        user: true
-      }
-    });
+    try {
+      credential = await prisma.credential.findUnique({
+        where: {
+          username,
+        },
+        include: {
+          user: true
+        }
+      });
+    } catch (error) {
+      handleDatabaseError(error, res)
+    }
 
     // If credential could not be found return error
     if (!credential) {

@@ -5,6 +5,8 @@ import { ParsedUrlQuery } from "querystring";
  * No User (session)        -->   /sign-in
  * Not Verified (session)   -->   /not-verified
 */
+
+/** If no callback is provided returns empty props object */
 export async function withAuthenticationGuard(
   ctx: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>,
   ssrWork?: Function

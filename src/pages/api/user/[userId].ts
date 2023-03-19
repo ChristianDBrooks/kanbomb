@@ -1,8 +1,8 @@
 import { saveSession, withSessionRoute } from "@lib/ironSession";
 import prisma from "@lib/prisma";
-import { Prisma } from "@prisma/client";
 import { IronSession } from "iron-session";
 import { NextApiRequest, NextApiResponse } from "next";
+import { handleDatabaseError } from "src/helpers/database";
 
 export default withSessionRoute(userRoute)
 
@@ -48,15 +48,9 @@ async function userRoute(req: NextApiRequest, res: NextApiResponse) {
         res.status(200).json(user);
       } catch (err) {
         console.error(err);
-        if (err instanceof Prisma.PrismaClientKnownRequestError) {
-          if (err.code === 'P2002') {
-            res.status(409).send(`Email ${patch.email} is already in use.`);
-            return;
-          }
-          res.status(500).send(`Database error occured: ${err.cause} ${err.message}`);
-          return;
-        }
-        res.status(500).send('Unknown database error occured.');
+        handleDatabaseError(err, res, {
+          'P2002': () => res.status(409).send(`Email ${patch.email} is already in use.`)
+        })
       }
     } catch (err) {
       console.error(err)

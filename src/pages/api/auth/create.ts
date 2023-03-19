@@ -10,6 +10,7 @@ async function createCredentialRoute(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  console.log("DATABASE_URL:", process.env.DATABASE_URL ?? 'undefined')
   if (req.method === "POST") {
     const { username, password, email } = req.body;
 

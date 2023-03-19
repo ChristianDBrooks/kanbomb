@@ -16,10 +16,11 @@ datasource db {
 
 // Represents a unique user's personal information
 model User {
-  id              String      @id @default(cuid())
+  id              String @id @default(cuid())
   name            String?
-  role            Role        @default(USER)
+  role            Role @default(USER)
   credential      Credential?
+  boards          Board[]
 }
 
 // Represents a credential for authentication
@@ -31,6 +32,30 @@ model Credential {
   email      String @unique
   verified   Boolean @default(false)
   user       User   @relation(fields: [userId], references: [id])
+}
+
+model Board {
+  id          String @id @default(cuid())
+  title       String
+  taskLists   TaskList[]
+  userId      String
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model TaskList {
+  id      String @id @default(cuid())
+  title   String
+  tasks   Task[] 
+  boardId String
+  board   Board @relation(fields: boardId, references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Task {
+  id         String @id @default(uuid())
+  complete   Boolean @default(false)
+  text       String
+  taskListId String
+  taskList   TaskList @relation(fields: [taskListId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 // Represents a user role used for authorization

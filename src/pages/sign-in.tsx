@@ -33,8 +33,9 @@ export default function SignInPage() {
 
     const text = await authenticationResponse.text();
     if (!authenticationResponse.ok) {
+      console.log(authenticationResponse.status)
       setLoading(false);
-      message(text, 'error');
+      message('Authentication failed! ' + text, 'error');
       console.error(text);
       return;
     }

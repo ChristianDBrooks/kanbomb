@@ -14,7 +14,7 @@ export async function withAuthenticationGuard(
   const user = ctx.req?.session?.user;
   const url = ctx?.resolvedUrl;
 
-  console.log('gaurds: routing -', url);
+  console.log('guards: routing -', url);
   if (!user) {
     console.log('guards: redirecting - /sign-in');
     return {

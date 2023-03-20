@@ -6,7 +6,7 @@ export async function sendMagicLinkEmail(email: string, link: string) {
   const msg = {
     to: email, // Recipient
     from: sender, // Sender
-    subject: 'NextJS Starter Sign In Link', // Subject
+    subject: 'KanBomb Sign In Link', // Subject
     html: `<p>Sign in from anywhere by clicking the magic link below!</p><a href="${link}">Sign In</a>`, // Email Content
   }
   if (!process.env.SEND_EMAILS) return;
@@ -26,7 +26,7 @@ export async function sendVerificationEmail(email: string, link: string) {
   const msg = {
     to: email, // Recipient
     from: sender, // Sender
-    subject: 'NextJS Starter Account Verification', // Subject
+    subject: 'KanBomb Account Verification', // Subject
     html: `<p>Your email ${email}, was used to create an account at ${process.env.EMAIL_REDIRECT_URI}. Verify your account by clicking the link below.</p><p>If you did not create this account, ignore this message.</p><a href="${link}">Verify Account</a>`, // Email Content
   }
   if (!process.env.SEND_EMAILS) return;

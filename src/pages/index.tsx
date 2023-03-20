@@ -18,23 +18,27 @@ export const getServerSideProps = withSessionSsr(
   function getServerSideProps(ctx) {
     return withAuthenticationGuard(ctx, async () => {
 
-      const boards = await prisma.board.findMany({
-        where: {
-          userId: ctx.req.session.user?.userId
-        },
-        include: {
-          taskLists: {
-            include: {
-              tasks: true
+      try {
+        const boards = await prisma.board.findMany({
+          where: {
+            userId: ctx.req.session.user?.userId
+          },
+          include: {
+            taskLists: {
+              include: {
+                tasks: true
+              }
             }
           }
-        }
-      })
+        })
 
-      return {
-        props: {
-          boards
+        return {
+          props: {
+            boards: boards ?? []
+          }
         }
+      } catch (error) {
+        console.error(error);
       }
     });
   },

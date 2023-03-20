@@ -1,63 +1,58 @@
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { Box, Button, Checkbox, colors, IconButton, List, ListItem, Stack, TextField } from "@mui/material";
-import { Task, TaskList } from '@prisma/client';
-import { ChangeEvent, Reducer, useReducer, useState } from 'react';
+import { Task, TaskList as TaskListModel } from '@prisma/client';
+import { Reducer, useEffect, useReducer, useRef, useState } from 'react';
 import theme from 'src/config/theme';
+import useDebounce from 'src/hooks/useDebounce';
 import { uuid } from 'uuidv4';
 
-type ListItem = {
-  id: string;
-  complete: boolean;
-  text: string;
-}
+type Tasks = Omit<Task, "taskListId">[]
 
-type List = ListItem[];
-
-type ListAction = {
+type TaskListAction = {
   type: 'add',
-  item: Omit<ListItem, "id">;
+  task: Omit<Task, "id" | "taskListId">;
 } | {
   type: 'update',
-  itemId: string | number;
-  item: Partial<Omit<ListItem, "id">>;
+  taskId: string;
+  task: Partial<Omit<Task, "id" | "taskListId">>;
 } | {
   type: 'delete',
-  itemId: string | number;
+  taskId: string;
 };
 
-const resize = (event: ChangeEvent<HTMLTextAreaElement>) => {
-  event.target.style.height = "5px";
-  event.target.style.height = (event.target.scrollHeight) + "px";
+const resize = (element: HTMLTextAreaElement) => {
+  element.style.height = "5px";
+  element.style.height = (element.scrollHeight) + "px";
 }
 
-const listReducer: Reducer<List, ListAction> = (state, action) => {
+const listReducer: Reducer<Tasks, TaskListAction> = (state, action) => {
   switch (action.type) {
     case "add": {
       // Copy new state array and push new item to front of array
-      return [{ id: uuid(), ...action.item }, ...state];
+      return [{ id: uuid(), ...action.task }, ...state];
     }
     case "update": {
       // Identify index of target item from the id provided.
       let targetIndex = state.findIndex(i => {
-        return i.id === action.itemId;
+        return i.id === action.taskId;
       })
       // Make sure item still exists, (hasn't been deleted and correct id provided)
       if (targetIndex < 0) {
-        console.error('Could not find item to update when looking for ' + action.itemId + '.')
+        console.error('Could not find task to update when looking for ' + action.taskId + '.')
         return state;
       };
       // Clone and insert new item data into state array
       state.splice(targetIndex, 1, // Copy state array
         {
           ...state[targetIndex],      // copy old item properties
-          ...action.item              // insert any newly updated item propertes
+          ...action.task              // insert any newly updated item propertes
         }
       )
       return [...state]
     }
     case "delete": {
       return [ // Copy state array
-        ...state.filter(item => item.id !== action.itemId)
+        ...state.filter(element => element.id !== action.taskId)
       ];
     }
     default:
@@ -65,16 +60,46 @@ const listReducer: Reducer<List, ListAction> = (state, action) => {
   }
 }
 
-function BoardList({
-  taskList,
+function TaskList({
+  data,
   deleteList
 }: {
-  taskList: TaskList & { tasks: Task[] },
+  data: TaskListModel & { tasks: Task[] },
   deleteList: (id: string) => void
 }) {
-  const [title, setTitle] = useState<string>(taskList.title);
-  const initialList: List = taskList?.tasks ?? [{ id: uuid(), complete: false, text: '' }]
+  const [title, setTitle] = useState<string>(data.title);
+  const initialList: Task[] = data?.tasks ?? [];
   const [list, dispatch] = useReducer(listReducer, initialList);
+  const { debounce } = useDebounce();
+  const effectCount = useRef<number>(0);
+
+  useEffect(() => {
+    const saveList = async () => {
+      const taskListUpdateResponse = await fetch('/api/tasklist', {
+        method: "PATCH",
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          taskListId: data.id,
+          tasks: list
+        })
+      })
+      if (!taskListUpdateResponse.ok) {
+        // Replace with ControlledMessage
+        alert(taskListUpdateResponse.status)
+      }
+    }
+
+    // This prevents database calls from running onMount with "use strict" (it runs twice)
+    effectCount.current++;
+    if (effectCount.current < (process.env.NODE_ENV === 'development' ? 3 : 2)) {
+      return
+    };
+
+    debounce(() => {
+      saveList()
+    })
+
+  }, [list, debounce, data.id])
 
   return (
     <Box sx={{
@@ -95,7 +120,7 @@ function BoardList({
           }}
         />
         <IconButton
-          onClick={() => deleteList(taskList.id)}
+          onClick={() => deleteList(data.id)}
         >
           <DeleteIcon sx={{
             color: colors.grey[400]
@@ -103,7 +128,7 @@ function BoardList({
         </IconButton>
       </Stack>
       <Button
-        onClick={() => dispatch({ type: 'add', item: { complete: false, text: '' } })}
+        onClick={() => dispatch({ type: 'add', task: { complete: false, text: '' } })}
         variant="outlined"
         fullWidth={true}
         startIcon={
@@ -111,21 +136,21 @@ function BoardList({
         }
         sx={{ color: '#fff' }}
       >
-        Add list item
+        Add New Task
       </Button>
       <List>
-        {list.map(item => (
+        {list.map(task => (
           <ListItem
-            key={item.id}
+            key={task.id}
             alignItems='flex-start'
           >
             <Checkbox
-              checked={item.complete}
+              checked={task.complete}
               onChange={(e, checked) => {
                 dispatch({
                   type: 'update',
-                  itemId: item.id,
-                  item: { complete: checked }
+                  taskId: task.id,
+                  task: { complete: checked }
                 })
               }}
               sx={{
@@ -135,19 +160,24 @@ function BoardList({
               disableRipple
             />
             <textarea
-              value={item.text}
+              value={task.text}
+              ref={(current) => {
+                if (current) {
+                  resize(current);
+                }
+              }}
               onChange={
                 (e) => {
                   dispatch({
                     type: 'update',
-                    itemId: item.id,
-                    item: { text: e.currentTarget.value }
+                    taskId: task.id,
+                    task: { text: e.currentTarget.value }
                   })
-                  resize(e);
+                  resize(e.currentTarget);
                 }
               }
-              aria-label='list item'
-              placeholder='New list item...'
+              aria-label='task'
+              placeholder='New task...'
               style={{
                 width: '100%',
                 background: colors.grey[900],
@@ -168,4 +198,4 @@ function BoardList({
   );
 }
 
-export default BoardList;
+export default TaskList;

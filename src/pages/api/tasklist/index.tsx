@@ -1,19 +1,21 @@
 import { withSessionRoute } from "@lib/ironSession";
 import prisma from "@lib/prisma";
+import { Task } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from "next";
 import { getBoardsByUserId, handleDatabaseError } from "src/helpers/database";
 
 export default withSessionRoute(userRoute)
 
 async function userRoute(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === "POST") {
-    try {
-      const userId = req.session.user?.userId;
-      if (!userId) {
-        res.status(401).send("Not authorized.");
-        return;
-      }
-      const body = req.body;
+  try {
+    const userId = req.session.user?.userId;
+    if (!userId) {
+      res.status(401).send("Not authorized.");
+      return;
+    }
+    const body = req.body;
+    /** CREATE */
+    if (req.method === "POST") {
       const taskList = await prisma.taskList.create({
         data: {
           title: 'New Task List',
@@ -37,21 +39,56 @@ async function userRoute(req: NextApiRequest, res: NextApiResponse) {
           boards: userBoards
         }
       })
-
-    } catch (err) {
-      console.error(err)
-      handleDatabaseError(err, res)
-      res.status(500).send('Internal Server Error');
     }
-  }
-  if (req.method === "DELETE") {
-    try {
-      const userId = req.session.user?.userId;
-      if (!userId) {
-        res.status(401).send("Not authorized.");
-        return;
+    /** UPDATE */
+    if (req.method === "PATCH") {
+      console.log('taskListId:', body.taskListId)
+      console.log('tasks:', body.tasks)
+
+      const responses = await prisma.$transaction(
+        [
+          ...body.tasks.map((task: Task) => {
+            return prisma.task.upsert({
+              where: {
+                id: task.id
+              },
+              create: {
+                ...task,
+                taskListId: body.taskListId,
+              },
+              update: {
+                text: task.text,
+                complete: task.complete,
+              }
+            })
+          }),
+          prisma.taskList.findUnique({
+            where: {
+              id: body.taskListId
+            },
+            include: {
+              tasks: true
+            }
+          })
+        ]
+      )
+
+      if (responses.some((response) => !response)) {
+        throw new Error("Failed to update task list.")
       }
-      const body = req.body;
+
+      const taskList = responses[responses.length - 1]
+
+      console.log('saved tasks:', taskList.tasks);
+
+      res.json({
+        data: {
+          taskList
+        }
+      })
+    }
+    /** DELETE */
+    if (req.method === "DELETE") {
       const taskList = await prisma.taskList.delete({
         where: {
           id: body.taskListId
@@ -67,10 +104,11 @@ async function userRoute(req: NextApiRequest, res: NextApiResponse) {
         }
       })
 
-    } catch (err) {
-      console.error(err)
-      handleDatabaseError(err, res)
-      res.status(500).send('Internal Server Error');
+
     }
+  } catch (err) {
+    console.error(err)
+    handleDatabaseError(err, res)
+    res.status(500).send('Internal Server Error');
   }
 }

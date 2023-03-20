@@ -1,15 +1,15 @@
-import BoardList from "@components/BoardList";
 import ControlledMessage, { useMessageController } from "@components/ControlledMessage";
+import TaskList from "@components/TaskList";
 import { withSessionSsr } from "@lib/ironSession";
 import prisma from "@lib/prisma";
 import AddIcon from '@mui/icons-material/Add';
 import { Box, colors, Container, Stack, Typography } from "@mui/material";
-import { Board, Task, TaskList } from "@prisma/client";
+import { Board, Task, TaskList as TaskListModel } from "@prisma/client";
 import { useState } from "react";
 import { withAuthenticationGuard } from "src/helpers/guards";
 
 type BoardsWithTaskListsWithTasks = (Board & {
-  taskLists: (TaskList & {
+  taskLists: (TaskListModel & {
     tasks: Task[];
   })[];
 })[]
@@ -41,7 +41,6 @@ export const getServerSideProps = withSessionSsr(
 );
 
 export default function DashboardPage({ boards: inititalBoards }: { boards: BoardsWithTaskListsWithTasks }) {
-  console.log('initialBoards', inititalBoards)
   const [boards, setBoards] = useState(inititalBoards);
   const [activeBoardId, setActiveBoardId] = useState(boards?.[0]?.id)
   const activeBoard = boards?.find((board) => board.id === activeBoardId)
@@ -117,9 +116,9 @@ export default function DashboardPage({ boards: inititalBoards }: { boards: Boar
         >{activeBoard.title}</Typography>
         <Stack direction="row" gap={2}>
           {
-            activeBoard.taskLists.map(taskList => <BoardList
+            activeBoard.taskLists.map(taskList => <TaskList
               key={taskList.id}
-              taskList={taskList}
+              data={taskList}
               deleteList={handleDeleteTaskList}
             />)
           }

@@ -1,41 +1,6 @@
-# NextJS DuoTech Kit
+# KanBomb
 
-## Quickstart 
-1. Clone this repo 
-```
-git clone https://github.com/christian-duotech/nextjs-starter.git <repository>
-```
-2. Create new repo
-3. Remove the nextjs-starter remotes to your new project, and add the new repo.
-```
-git remote remove origin
-git remote add origin https://github.com/<username>/<repository>.git 
-```
-4. Run `npm install`
-5. Setup [Authentication](#setup-authentication)
-6. Setup [Prisma](#setup-prisma).
-7. Setup [Stripe](#setup-stripe).
-7. Setup [PWA](#setup-pwa).
-8. Run `npm run dev`
-
-## Setup Authentication
-1. Set the `IRON_SESSION_PASSWORD` in `.env`.
-2. Set the `SENDGRID_API_KEY` in `.env`.
-3. Set the `SENDGRID_VERIFIED_SENDER` in `.env`
-3. Set the `EMAIL_REDIRECT_URI` in `.env`
-
-## Setup Prisma
-1. Set the `DATABASE_URL` in the `.env` file to point to your existing database.
-2. Run `npx prisma generate` to generate the Prisma Client. You can then start querying your database.
-2. Run `npx prisma db push` to generate the Prisma Client. You can then start querying your database.
-
-## Setup Stripe
-1. Set the `STRIPE_SECRET_KEY` in the `.env` file to point to your test environment Stripe key.
-
-## Setup PWA
-1. You will want to modify `manifest.json` to match your new project name, and the data in the HTML meta tags in `_app.tsx`.
-
-## Kit Includes
+Kanbomb is a simple kanban style task board application, allowing users to create persistant boards, with unlimited named lists and tasks. This app was built specifcally by me Christian Brooks, to demonstrate the extense of my experience in React, Design principles, Data Flow & Architecture, Schema Architecture, and Application Development. I used a starter kit that I built myself in the NextJS framework. The features I built into the starter kit include:
 * Material UI
 * Material Icons
 * Prisma
@@ -47,43 +12,19 @@ git remote add origin https://github.com/<username>/<repository>.git
 * SendGrid
 * Stripe
 * PWA Enabled
-___
+However I added to this to build out the KanBomb application.
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Note: This app is not completed, and is not a fully polished app, but rather was built in a couple of nights of development to have a portfolio project I can show to hiring managers, since most of my work is not publicly available to show.
 
-## Getting Started
+# Future Development
 
-First, run the development server:
+ - Deleting tasks from a list.
+ - User can create multiple boards.
+ - User can modify board title.
+ - User can delete boards.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+# Needs Improvement
+ - Unit Tests
+ - Complete database error handling.
+ - Complete client side request handling.
+ - The way we are currently synchronizing tasklists requires a loop for n number of tasks, and a lot of heavyhanded data updates. Not performant in the long term, but works for a proof of concept. We would want to make each update more granular allowing for more precise and performant updates. This currently is more of a "catch all" update.

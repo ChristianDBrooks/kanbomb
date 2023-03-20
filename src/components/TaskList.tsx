@@ -74,13 +74,16 @@ function TaskList({
   const effectCount = useRef<number>(0);
 
   useEffect(() => {
-    const saveList = async () => {
+    const updateTaskList = async () => {
       const taskListUpdateResponse = await fetch('/api/tasklist', {
         method: "PATCH",
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
-          taskListId: data.id,
-          tasks: list
+          taskList: {
+            id: data.id,
+            title: title,
+            tasks: list
+          }
         })
       })
       if (!taskListUpdateResponse.ok) {
@@ -96,10 +99,10 @@ function TaskList({
     };
 
     debounce(() => {
-      saveList()
+      updateTaskList()
     })
 
-  }, [list, debounce, data.id])
+  }, [list, title, debounce, data.id, data.boardId])
 
   return (
     <Box sx={{

@@ -42,19 +42,33 @@ async function userRoute(req: NextApiRequest, res: NextApiResponse) {
     }
     /** UPDATE */
     if (req.method === "PATCH") {
-      console.log('taskListId:', body.taskListId)
-      console.log('tasks:', body.tasks)
+      console.log('taskList:', body.taskList)
+
+      const { tasks, id, title } = body.taskList;
+
+      const titleUpdate = await prisma.taskList.update({
+        where: {
+          id
+        },
+        data: {
+          title
+        }
+      })
+
+      if (!titleUpdate) {
+        throw new Error("Failed to update task list.")
+      }
 
       const responses = await prisma.$transaction(
         [
-          ...body.tasks.map((task: Task) => {
+          ...tasks.map((task: Task) => {
             return prisma.task.upsert({
               where: {
                 id: task.id
               },
               create: {
                 ...task,
-                taskListId: body.taskListId,
+                taskListId: id,
               },
               update: {
                 text: task.text,
@@ -64,7 +78,7 @@ async function userRoute(req: NextApiRequest, res: NextApiResponse) {
           }),
           prisma.taskList.findUnique({
             where: {
-              id: body.taskListId
+              id
             },
             include: {
               tasks: true
@@ -79,7 +93,7 @@ async function userRoute(req: NextApiRequest, res: NextApiResponse) {
 
       const taskList = responses[responses.length - 1]
 
-      console.log('saved tasks:', taskList.tasks);
+      console.log('updated taskList:', taskList);
 
       res.json({
         data: {

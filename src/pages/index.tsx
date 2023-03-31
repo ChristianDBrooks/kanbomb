@@ -1,4 +1,5 @@
 import { withSessionSsr } from "@lib/ironSession";
+import prisma from "@lib/prisma";
 import { Board, Task, TaskList as TaskListModel } from "@prisma/client";
 
 
@@ -8,11 +9,41 @@ type BoardsWithTaskListsWithTasks = (Board & {
   })[];
 })[]
 
-export const getServerSideProps = withSessionSsr((ctx) => {
-  {
+export const getServerSideProps = withSessionSsr(async (ctx) => {
+  try {
+    if (!ctx.req.session.user) {
+      return {
+        redirect: {
+          destination: '/sign-in',
+          permanent: false
+        }
+      }
+    }
+
+    const boards = await prisma.board.findMany({
+      where: {
+        userId: ctx.req.session.user?.userId
+      },
+      include: {
+        taskLists: {
+          include: {
+            tasks: true
+          }
+        }
+      }
+    })
+
     return {
       props: {
-        boards: []
+        boards: boards ?? []
+      }
+    }
+  } catch (err) {
+    console.error(err)
+    return {
+      redirect: {
+        destination: '/unauthorized',
+        permanent: false
       }
     }
   }

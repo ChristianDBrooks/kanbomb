@@ -1,3 +1,11 @@
+export function getServerSideProps() {
+  return {
+    redirect: {
+      destination: '/sign-in',
+      permanent: false
+    }
+  }
+}
 
 export default function TestDashboard() {
   return (<div>

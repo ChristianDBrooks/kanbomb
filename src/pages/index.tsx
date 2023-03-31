@@ -1,12 +1,10 @@
 import Message, { useMessageProvider } from "@components/Message";
 import TaskList from "@components/TaskList";
 import { withSessionSsr } from "@lib/ironSession";
-import prisma from "@lib/prisma";
 import AddIcon from '@mui/icons-material/Add';
 import { Box, colors, Container, Stack, Typography } from "@mui/material";
 import { Board, Task, TaskList as TaskListModel } from "@prisma/client";
 import { useState } from "react";
-import { withAuthenticationGuard } from "src/helpers/guards";
 
 type BoardsWithTaskListsWithTasks = (Board & {
   taskLists: (TaskListModel & {
@@ -17,34 +15,37 @@ type BoardsWithTaskListsWithTasks = (Board & {
 export const getServerSideProps = withSessionSsr(
   function getServerSideProps(ctx) {
     console.log('[SSR]: loading server side dashboard')
-    return withAuthenticationGuard(ctx, async () => {
+    return {
+      props: { boards: [] }
+    }
+    // return withAuthenticationGuard(ctx, async () => {
 
-      console.log('[SSR]: Loading DashboardPage')
-      try {
-        const boards = await prisma.board.findMany({
-          where: {
-            userId: ctx.req.session.user?.userId
-          },
-          include: {
-            taskLists: {
-              include: {
-                tasks: true
-              }
-            }
-          }
-        })
+    //   console.log('[SSR]: Loading DashboardPage')
+    //   try {
+    //     const boards = await prisma.board.findMany({
+    //       where: {
+    //         userId: ctx.req.session.user?.userId
+    //       },
+    //       include: {
+    //         taskLists: {
+    //           include: {
+    //             tasks: true
+    //           }
+    //         }
+    //       }
+    //     })
 
-        console.log('finished server side dashboard')
+    //     console.log('finished server side dashboard')
 
-        return {
-          props: {
-            boards: boards ?? []
-          }
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    });
+    //     return {
+    //       props: {
+    //         boards: boards ?? []
+    //       }
+    //     }
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // });
   },
 );
 

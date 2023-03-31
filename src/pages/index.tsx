@@ -1,4 +1,4 @@
-import ControlledMessage, { useMessageController } from "@components/ControlledMessage";
+import Message, { useMessageProvider } from "@components/Message";
 import TaskList from "@components/TaskList";
 import { withSessionSsr } from "@lib/ironSession";
 import prisma from "@lib/prisma";
@@ -48,7 +48,7 @@ export default function DashboardPage({ boards: inititalBoards }: { boards: Boar
   const [boards, setBoards] = useState(inititalBoards);
   const [activeBoardId, setActiveBoardId] = useState(boards?.[0]?.id)
   const activeBoard = boards?.find((board) => board.id === activeBoardId)
-  const { message, controller } = useMessageController();
+  const { showMessage, messageController } = useMessageProvider();
 
   const handleAddTaskList = async () => {
     const addTaskListResponse = await fetch('/api/tasklist', {
@@ -60,7 +60,7 @@ export default function DashboardPage({ boards: inititalBoards }: { boards: Boar
     })
 
     if (!addTaskListResponse.ok) {
-      message('Failed to add task list!', 'error')
+      showMessage('Failed to add task list!', 'error')
       return;
     }
 
@@ -83,7 +83,7 @@ export default function DashboardPage({ boards: inititalBoards }: { boards: Boar
 
 
     if (!deleteTaskListResponse.ok) {
-      message('Failed to delete task list!', 'error')
+      showMessage('Failed to delete task list!', 'error')
       return;
     }
 
@@ -113,7 +113,7 @@ export default function DashboardPage({ boards: inititalBoards }: { boards: Boar
       minHeight: 'calc(100vh - 64px)',
     }}>
       <Box overflow='auto'>
-        <ControlledMessage controller={controller} />
+        <Message controller={messageController} />
         <Typography
           variant="h4"
           paddingY={2}

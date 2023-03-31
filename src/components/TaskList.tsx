@@ -5,6 +5,7 @@ import { Reducer, useEffect, useReducer, useRef, useState } from 'react';
 import theme from 'src/config/theme';
 import useDebounce from 'src/hooks/useDebounce';
 import { uuid } from 'uuidv4';
+import { useMessageProvider } from './Message';
 
 type Tasks = Omit<Task, "taskListId">[]
 
@@ -72,6 +73,7 @@ function TaskList({
   const [list, dispatch] = useReducer(listReducer, initialList);
   const { debounce } = useDebounce();
   const effectCount = useRef<number>(0);
+  const { showMessage, messageController } = useMessageProvider();
 
   useEffect(() => {
     const updateTaskList = async () => {
@@ -87,8 +89,7 @@ function TaskList({
         })
       })
       if (!taskListUpdateResponse.ok) {
-        // Replace with ControlledMessage
-        alert(taskListUpdateResponse.status)
+        showMessage('Something went wrong attempting to update task list. Status:' + taskListUpdateResponse.status, 'error')
       }
     }
 

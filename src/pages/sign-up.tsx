@@ -1,5 +1,5 @@
-import ControlledMessage, { useMessageController } from '@components/ControlledMessage'
 import Loading from '@components/Loading'
+import Message, { useMessageProvider } from '@components/Message'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
@@ -25,11 +25,11 @@ interface SignInFormElement extends HTMLFormElement {
 
 export default function SignUpPage() {
   const route = useRouter();
-  const { controller, message } = useMessageController();
   const [loading, setLoading] = useState(false)
   const [usernameErrorText, setUsernameErrorText] = useState('')
   const [emailErrorText, setEmailErrorText] = useState('')
   const [passwordErrorText, setPasswordErrorText] = useState('')
+  const { showMessage, messageController } = useMessageProvider();
 
   const clearFormErrors = () => {
     setUsernameErrorText('');
@@ -80,19 +80,19 @@ export default function SignUpPage() {
       }
 
       console.error(creationResponse.status + ' ' + creationResponse.statusText);
-      message(text, 'error')
+      showMessage(text, 'error')
       setLoading(false);
       return;
     }
 
     setLoading(false);
-    message("Account creation successful! You are signed in!", 'success')
+    showMessage("Account creation successful! You are signed in!", 'success')
     route.push('/')
   };
 
   return (
     <Container component="main" maxWidth="xs">
-      <ControlledMessage controller={controller} />
+      <Message controller={messageController} />
       <Loading open={loading} />
       <Box
         sx={{

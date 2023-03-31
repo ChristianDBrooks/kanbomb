@@ -1,5 +1,5 @@
-import ControlledMessage, { useMessageController } from '@components/ControlledMessage';
 import Loading from '@components/Loading';
+import Message, { useMessageProvider } from '@components/Message';
 import SignOut from '@components/SignOut';
 import { saveSession, withSessionSsr } from '@lib/ironSession';
 import prisma from '@lib/prisma';
@@ -52,7 +52,7 @@ export const getServerSideProps = withSessionSsr(
 function NotVerifiedPage({ user }: { user: IronSession["user"] }) {
   const [userEmail, setUserEmail] = useState(user?.email || null);
   const [loading, setLoading] = useState(false);
-  const { controller, message } = useMessageController();
+  const { showMessage, messageController } = useMessageProvider();
 
   const handleResend = async () => {
     setLoading(true);
@@ -60,9 +60,9 @@ function NotVerifiedPage({ user }: { user: IronSession["user"] }) {
       method: "POST"
     })
     if (response.ok) {
-      message('Successfuly sent verification email.', 'success')
+      showMessage('Successfuly sent verification email.', 'success')
     } else {
-      message('Failed to send verification email.', 'error')
+      showMessage('Failed to send verification email.', 'error')
     }
     setLoading(false);
   }
@@ -84,13 +84,13 @@ function NotVerifiedPage({ user }: { user: IronSession["user"] }) {
     if (!response.ok) {
       console.error(`Failed to update email address. ${result}`, 'error');
       setLoading(false);
-      message(`Failed to update email address. ${result}`, 'error')
+      showMessage(`Failed to update email address. ${result}`, 'error')
       return;
     }
 
     setUserEmail(newEmail);
     setLoading(false);
-    message(`Successfully updated email address.`, 'success')
+    showMessage(`Successfully updated email address.`, 'success')
   }
 
   return (
@@ -103,7 +103,6 @@ function NotVerifiedPage({ user }: { user: IronSession["user"] }) {
       }}
     >
       <Loading open={loading} />
-      <ControlledMessage controller={controller} />
       <Box
         sx={{
           marginTop: 1,
@@ -149,7 +148,7 @@ function NotVerifiedPage({ user }: { user: IronSession["user"] }) {
           <SignOut />
         </Box>
       </Box>
-      <ControlledMessage controller={controller} />
+      <Message controller={messageController} />
     </Container>)
 }
 

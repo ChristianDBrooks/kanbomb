@@ -1,5 +1,5 @@
-import ControlledMessage, { useMessageController } from '@components/ControlledMessage';
 import Loading from '@components/Loading';
+import Message, { useMessageProvider } from '@components/Message';
 import LockResetIcon from '@mui/icons-material/LockReset';
 import { Avatar, Box, Button, Container, Grid, Link, TextField, Typography } from "@mui/material";
 import NextLink from 'next/link';
@@ -16,7 +16,7 @@ interface ForgotPasswordFormElement extends HTMLFormElement {
 export default function ForgotPassword() {
   const [finished, setFinished] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { controller, message } = useMessageController();
+  const { showMessage, messageController } = useMessageProvider();
 
   const handleSubmit = async (event: FormEvent<ForgotPasswordFormElement>) => {
     setLoading(true);
@@ -37,7 +37,7 @@ export default function ForgotPassword() {
       const errorMsg = text || 'Something went wrong.';
       console.error(errorMsg);
       setLoading(false);
-      message(errorMsg, 'error');
+      showMessage(errorMsg, 'error');
       return;
     }
 
@@ -47,7 +47,7 @@ export default function ForgotPassword() {
 
   return (
     <Container component="main" maxWidth="xs">
-      <ControlledMessage controller={controller} />
+      <Message controller={messageController} />
       <Loading open={loading} />
       <Box
         sx={{

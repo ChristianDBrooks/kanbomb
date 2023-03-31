@@ -1,5 +1,5 @@
-import ControlledMessage, { useMessageController } from '@components/ControlledMessage'
 import Loading from '@components/Loading'
+import Message, { useMessageProvider } from '@components/Message'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
@@ -18,7 +18,7 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState(false);
   const route = useRouter()
-  const { controller, message } = useMessageController();
+  const { showMessage, messageController } = useMessageProvider();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     setLoading(true);
@@ -35,18 +35,18 @@ export default function SignInPage() {
     if (!authenticationResponse.ok) {
       console.log(authenticationResponse.status)
       setLoading(false);
-      message('Authentication failed! ' + text, 'error');
+      showMessage('Authentication failed! ' + text, 'error');
       console.error(text);
       return;
     }
-    message('Sign in successful!', 'success');
+    showMessage('Sign in successful!', 'success');
     setLoading(false);
     route.push('/')
   };
 
   return (
     <Container component="main" maxWidth="xs">
-      <ControlledMessage controller={controller} />
+      <Message controller={messageController} />
       <Loading open={loading} />
       <Box
         sx={{

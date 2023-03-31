@@ -1,9 +1,7 @@
 export function getServerSideProps() {
   return {
-    redirect: {
-      props: {
-        boards: []
-      }
+    props: {
+      boards: []
     }
   }
 }

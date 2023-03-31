@@ -16,8 +16,10 @@ type BoardsWithTaskListsWithTasks = (Board & {
 
 export const getServerSideProps = withSessionSsr(
   function getServerSideProps(ctx) {
+    console.log('[SSR]: loading server side dashboard')
     return withAuthenticationGuard(ctx, async () => {
 
+      console.log('[SSR]: Loading DashboardPage')
       try {
         const boards = await prisma.board.findMany({
           where: {
@@ -31,6 +33,8 @@ export const getServerSideProps = withSessionSsr(
             }
           }
         })
+
+        console.log('finished server side dashboard')
 
         return {
           props: {

@@ -1,6 +1,5 @@
 import Message, { useMessageProvider } from "@components/Message";
 import TaskList from "@components/TaskList";
-import { withSessionSsr } from "@lib/ironSession";
 import AddIcon from '@mui/icons-material/Add';
 import { Box, colors, Container, Stack, Typography } from "@mui/material";
 import { Board, Task, TaskList as TaskListModel } from "@prisma/client";
@@ -12,42 +11,46 @@ type BoardsWithTaskListsWithTasks = (Board & {
   })[];
 })[]
 
-export const getServerSideProps = withSessionSsr(
-  function getServerSideProps(ctx) {
-    console.log('[SSR]: loading server side dashboard')
-    return {
-      props: { boards: [] }
-    }
-    // return withAuthenticationGuard(ctx, async () => {
+export function getServerSideProps() {
+  console.log('[SSR]: loading server side dashboard')
+  return {
+    props: { boards: [] }
+  }
+}
 
-    //   console.log('[SSR]: Loading DashboardPage')
-    //   try {
-    //     const boards = await prisma.board.findMany({
-    //       where: {
-    //         userId: ctx.req.session.user?.userId
-    //       },
-    //       include: {
-    //         taskLists: {
-    //           include: {
-    //             tasks: true
-    //           }
-    //         }
-    //       }
-    //     })
+// export const getServerSideProps = withSessionSsr(
+//   function getServerSideProps(ctx) {
+//     console.log('[SSR]: loading server side dashboard')
+//     return withAuthenticationGuard(ctx, async () => {
 
-    //     console.log('finished server side dashboard')
+//       console.log('[SSR]: Loading DashboardPage')
+//       try {
+//         const boards = await prisma.board.findMany({
+//           where: {
+//             userId: ctx.req.session.user?.userId
+//           },
+//           include: {
+//             taskLists: {
+//               include: {
+//                 tasks: true
+//               }
+//             }
+//           }
+//         })
 
-    //     return {
-    //       props: {
-    //         boards: boards ?? []
-    //       }
-    //     }
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // });
-  },
-);
+//         console.log('finished server side dashboard')
+
+//         return {
+//           props: {
+//             boards: boards ?? []
+//           }
+//         }
+//       } catch (error) {
+//         console.error(error);
+//       }
+//     });
+//   },
+// );
 
 export default function DashboardPage({ boards: inititalBoards }: { boards: BoardsWithTaskListsWithTasks }) {
   const [boards, setBoards] = useState(inititalBoards);

@@ -1,8 +1,9 @@
 export function getServerSideProps() {
   return {
     redirect: {
-      destination: '/sign-in',
-      permanent: false
+      props: {
+        boards: []
+      }
     }
   }
 }

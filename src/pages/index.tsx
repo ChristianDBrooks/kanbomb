@@ -1,6 +1,7 @@
 import { withSessionSsr } from "@lib/ironSession";
 import prisma from "@lib/prisma";
 import { Board, Task, TaskList as TaskListModel } from "@prisma/client";
+import { withAuthenticationGuard } from "src/helpers/guards";
 
 
 type BoardsWithTaskListsWithTasks = (Board & {
@@ -10,48 +11,43 @@ type BoardsWithTaskListsWithTasks = (Board & {
 })[]
 
 export const getServerSideProps = withSessionSsr(async (ctx) => {
-  try {
-    if (!ctx.req.session.user) {
+  return await withAuthenticationGuard(ctx, async () => {
+    try {
+      const boards = await prisma.board.findMany({
+        where: {
+          userId: ctx.req.session.user?.userId
+        },
+        include: {
+          taskLists: {
+            include: {
+              tasks: true
+            }
+          }
+        }
+      })
+
+      return {
+        props: {
+          boards: boards ?? []
+        }
+      }
+    } catch (err) {
+      console.error(err)
       return {
         redirect: {
-          destination: '/sign-in',
+          destination: '/unauthorized',
           permanent: false
         }
       }
     }
+  })
 
-    const boards = await prisma.board.findMany({
-      where: {
-        userId: ctx.req.session.user?.userId
-      },
-      include: {
-        taskLists: {
-          include: {
-            tasks: true
-          }
-        }
-      }
-    })
-
-    return {
-      props: {
-        boards: boards ?? []
-      }
-    }
-  } catch (err) {
-    console.error(err)
-    return {
-      redirect: {
-        destination: '/unauthorized',
-        permanent: false
-      }
-    }
-  }
 })
 
-export default function TestDashboard() {
+export default function TestDashboard({ boards }: { boards: BoardsWithTaskListsWithTasks }) {
   return (<div>
-    This is the static dashboard.
+    This is the ssr dashboard.
+    {JSON.stringify(boards, null, 2)}
   </div>)
 }
 

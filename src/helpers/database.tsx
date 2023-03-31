@@ -10,6 +10,9 @@ export function handleDatabaseError(error: any, res: NextApiResponse, map?: { [k
     } else {
       res.status(500).send(`Database error occured: ${error.cause} ${error.message}`);
     }
+  } else {
+    console.error(error);
+    res.status(500).send(`Unknown database error occurred.`)
   }
 }
 

@@ -33,6 +33,7 @@ async function authenticateCredentialRoute(
       });
     } catch (error) {
       handleDatabaseError(error, res)
+      return;
     }
 
     // If credential could not be found return error

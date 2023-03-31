@@ -1,5 +1,5 @@
 import { withSessionSsr } from "@lib/ironSession";
-import { Board, Task } from "@prisma/client";
+import { Board, Task, TaskList as TaskListModel } from "@prisma/client";
 
 
 type BoardsWithTaskListsWithTasks = (Board & {

@@ -1,22 +1,28 @@
-export function getServerSideProps() {
-  return {
-    props: {
-      boards: []
+import { withSessionSsr } from "@lib/ironSession";
+import { Board, Task } from "@prisma/client";
+
+
+type BoardsWithTaskListsWithTasks = (Board & {
+  taskLists: (TaskListModel & {
+    tasks: Task[];
+  })[];
+})[]
+
+export const getServerSideProps = withSessionSsr((ctx) => {
+  {
+    return {
+      props: {
+        boards: []
+      }
     }
   }
-}
+})
 
 export default function TestDashboard() {
   return (<div>
     This is the static dashboard.
   </div>)
 }
-
-// type BoardsWithTaskListsWithTasks = (Board & {
-//   taskLists: (TaskListModel & {
-//     tasks: Task[];
-//   })[];
-// })[]
 
 // export const getServerSideProps = withSessionSsr(
 //   function getServerSideProps(ctx) {

@@ -5,7 +5,7 @@ import { Reducer, useEffect, useReducer, useRef, useState } from 'react';
 import theme from 'src/config/theme';
 import useDebounce from 'src/hooks/useDebounce';
 import { uuid } from 'uuidv4';
-import { useMessageProvider } from './Message';
+import Message, { useMessageProvider } from './Message';
 
 type Tasks = Omit<Task, "taskListId">[]
 
@@ -103,7 +103,7 @@ function TaskList({
       updateTaskList()
     })
 
-  }, [list, title, debounce, data.id, data.boardId])
+  }, [list, title, debounce, data.id, data.boardId, showMessage])
 
   return (
     <Box sx={{
@@ -112,6 +112,7 @@ function TaskList({
       borderRadius: '4px',
       minWidth: 300,
     }}>
+      <Message controller={messageController} />
       <Stack direction="row" alignItems='center' gap={1} marginBottom={2}>
         <TextField
           value={title}

@@ -1,4 +1,4 @@
-import { GetServerSidePropsContext, GetServerSidePropsResult, PreviewData } from "next";
+import { GetServerSidePropsContext, PreviewData } from "next";
 import { ParsedUrlQuery } from "querystring";
 
 /** Current Guard Flow 
@@ -9,8 +9,8 @@ import { ParsedUrlQuery } from "querystring";
 /** If no callback is provided returns empty props object */
 export async function withAuthenticationGuard(
   ctx: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>,
-  ssrWork?: () => Promise<GetServerSidePropsResult<{ [key: string]: unknown; }>> | undefined
-): Promise<GetServerSidePropsResult<{ [key: string]: unknown }>> {
+  ssrWork?: () => Promise<any> // TODO: Replace any with proper flexible type when done debugging
+) {
   const user = ctx.req?.session?.user;
   const url = ctx?.resolvedUrl;
 

@@ -6,7 +6,7 @@ import { withAuthenticationGuard } from "src/helpers/guards";
 
 export const getServerSideProps = withSessionSsr(
   async function getServerSideProps(ctx) {
-    return withAuthenticationGuard(ctx, () => {
+    return withAuthenticationGuard(ctx, async () => {
       if (!ctx.req.session.user?.verificationSession) {
         return {
           redirect: {

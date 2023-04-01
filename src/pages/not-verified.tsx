@@ -11,41 +11,50 @@ import { withAuthenticationGuard } from 'src/helpers/guards';
 
 export const getServerSideProps = withSessionSsr(
   async function getServerSideProps(ctx) {
-    return withAuthenticationGuard(ctx, async () => {
-      const user = ctx.req.session.user;
+    try {
+      return withAuthenticationGuard(ctx, async () => {
+        const user = ctx.req.session.user;
 
-      const credential = await prisma.credential.findUnique({
-        where: {
-          userId: user?.userId
-        },
-        include: {
-          user: true
-        }
-      })
-
-      if (credential && credential.verified) {
-        await saveSession(ctx.req.session, {
-          userId: credential.userId,
-          username: credential.username,
-          role: credential.user.role,
-          email: credential.email,
-          verified: credential.verified,
+        const credential = await prisma.credential.findUnique({
+          where: {
+            userId: user?.userId
+          },
+          include: {
+            user: true
+          }
         })
 
-        return {
-          redirect: {
-            destination: '/',
-            permanent: false
+        if (credential && credential.verified) {
+          await saveSession(ctx.req.session, {
+            userId: credential.userId,
+            username: credential.username,
+            role: credential.user.role,
+            email: credential.email,
+            verified: credential.verified,
+          })
+
+          return {
+            redirect: {
+              destination: '/',
+              permanent: false
+            }
           }
         }
-      }
 
+        return {
+          props: {
+            user
+          }
+        }
+      })
+    } catch (err) {
+      console.error(err)
       return {
         props: {
-          user
+          user: undefined
         }
       }
-    })
+    }
   },
 );
 

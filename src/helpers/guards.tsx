@@ -1,5 +1,4 @@
-import { GetServerSidePropsContext, PreviewData, Redirect } from "next";
-import { ParsedUrlQuery } from "querystring";
+import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 
 /** Current Guard Flow 
  * No User (session)        -->   /sign-in
@@ -7,9 +6,10 @@ import { ParsedUrlQuery } from "querystring";
 */
 
 /** If no callback is provided returns empty props object */
-export function withAuthenticationGuard(
-  ctx: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>,
-): { redirect: Redirect } | undefined {
+export async function withAuthenticationGuard(
+  ctx: GetServerSidePropsContext,
+  handler: () => Promise<GetServerSidePropsResult<{ [key: string]: unknown; }>>
+): Promise<GetServerSidePropsResult<{ [key: string]: unknown; }>> {
   const user = ctx.req?.session?.user;
   const url = ctx?.resolvedUrl;
 
@@ -33,4 +33,6 @@ export function withAuthenticationGuard(
       },
     };
   }
+
+  return handler()
 }

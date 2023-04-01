@@ -13,7 +13,6 @@ import { useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import { IronSession } from 'iron-session';
 import { useRouter } from 'next/router';
 import * as React from 'react';
 import SignOut from './SignOut';
@@ -26,7 +25,7 @@ interface Page {
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-  const { session } = useIronSession() as { session: IronSession };
+  const { session } = useIronSession();
   const theme = useTheme();
   const router = useRouter();
   const authenticated = !!session?.user;

@@ -1,5 +1,4 @@
 import { useMessageProvider } from "@components/Message";
-import TaskList from "@components/TaskList";
 import { withSessionSsr } from "@lib/ironSession";
 import prisma from "@lib/prisma";
 import { Box, Container, Stack, Typography } from "@mui/material";
@@ -157,11 +156,11 @@ export default function DashboardPage({ boards: inititalBoards }: { boards: Boar
         >{activeBoard.title}</Typography>
         <Stack direction="row" gap={2}>
           {
-            activeBoard.taskLists.map(taskList => <TaskList
-              key={taskList.id}
-              data={taskList}
-              deleteList={handleDeleteTaskList}
-            />)
+            // activeBoard.taskLists.map(taskList => <TaskList
+            //   key={taskList.id}
+            //   data={taskList}
+            //   deleteList={handleDeleteTaskList}
+            // />)
           }
           {/* <Box
             onClick={() => handleAddTaskList()}

@@ -1,4 +1,4 @@
-import { GetServerSidePropsContext, PreviewData } from "next";
+import { GetServerSidePropsContext, PreviewData, Redirect } from "next";
 import { ParsedUrlQuery } from "querystring";
 
 /** Current Guard Flow 
@@ -7,10 +7,9 @@ import { ParsedUrlQuery } from "querystring";
 */
 
 /** If no callback is provided returns empty props object */
-export async function withAuthenticationGuard(
+export function withAuthenticationGuard(
   ctx: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>,
-  ssrWork?: () => Promise<any> // TODO: Replace any with proper flexible type when done debugging
-) {
+): { redirect: Redirect } | undefined {
   const user = ctx.req?.session?.user;
   const url = ctx?.resolvedUrl;
 
@@ -34,20 +33,4 @@ export async function withAuthenticationGuard(
       },
     };
   }
-
-  if (ssrWork) {
-    try {
-      await ssrWork();
-    } catch (err) {
-      console.error(err)
-      return {
-        redirect: {
-          destination: '/unauthorized',
-          permanent: false
-        }
-      }
-    }
-  }
-  const ssrWorkReturn = ssrWork && ssrWork();
-  return ssrWorkReturn ?? { props: {} };
 }

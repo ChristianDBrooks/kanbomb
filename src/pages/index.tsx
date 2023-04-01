@@ -16,36 +16,36 @@ type BoardsWithTaskListsWithTasks = (Board & {
 })[]
 
 export const getServerSideProps = withSessionSsr(async (ctx) => {
-  return await withAuthenticationGuard(ctx, async () => {
-    try {
-      const boards = await prisma.board.findMany({
-        where: {
-          userId: ctx.req.session.user?.userId
-        },
-        include: {
-          taskLists: {
-            include: {
-              tasks: true
-            }
+  try {
+    const isGuarded = withAuthenticationGuard(ctx);
+    if (isGuarded) return isGuarded;
+    const boards = await prisma.board.findMany({
+      where: {
+        userId: ctx.req.session.user?.userId
+      },
+      include: {
+        taskLists: {
+          include: {
+            tasks: true
           }
         }
-      })
-
-      return {
-        props: {
-          boards: boards ?? []
-        }
       }
-    } catch (err) {
-      console.error(err)
-      return {
-        redirect: {
-          destination: '/unauthorized',
-          permanent: false
-        }
+    })
+
+    return {
+      props: {
+        boards: boards ?? []
       }
     }
-  })
+  } catch (err) {
+    console.error(err)
+    return {
+      redirect: {
+        destination: '/unauthorized',
+        permanent: false
+      }
+    }
+  }
 
 })
 

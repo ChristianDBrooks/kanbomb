@@ -146,6 +146,10 @@ export default function DashboardPage({ boards: inititalBoards }: { boards: Boar
     )
   }
 
+  return (<div>
+    Test JSX: {JSON.stringify(boards, null, 2)}
+  </div>)
+
   return (
     <Container sx={{
       minHeight: 'calc(100vh - 64px)',

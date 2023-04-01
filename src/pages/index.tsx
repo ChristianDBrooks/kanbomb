@@ -1,9 +1,7 @@
-import Message, { useMessageProvider } from "@components/Message";
-import TaskList from "@components/TaskList";
+import { useMessageProvider } from "@components/Message";
 import { withSessionSsr } from "@lib/ironSession";
 import prisma from "@lib/prisma";
-import AddIcon from '@mui/icons-material/Add';
-import { Box, colors, Container, Stack, Typography } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import { Board, Task, TaskList as TaskListModel } from "@prisma/client";
 import { useState } from "react";
 import { withAuthenticationGuard } from "src/helpers/guards";
@@ -150,42 +148,42 @@ export default function DashboardPage({ boards: inititalBoards }: { boards: Boar
     Test JSX: {JSON.stringify(boards, null, 2)}
   </div>)
 
-  return (
-    <Container sx={{
-      minHeight: 'calc(100vh - 64px)',
-    }}>
-      <Box overflow='auto'>
-        <Message controller={messageController} />
-        <Typography
-          variant="h4"
-          paddingY={2}
-        >{activeBoard.title}</Typography>
-        <Stack direction="row" gap={2}>
-          {
-            activeBoard.taskLists.map(taskList => <TaskList
-              key={taskList.id}
-              data={taskList}
-              deleteList={handleDeleteTaskList}
-            />)
-          }
-          <Box
-            onClick={() => handleAddTaskList()}
-            sx={{
-              background: colors.grey[800],
-              padding: 2,
-              borderRadius: '4px',
-              minWidth: 300,
-              cursor: 'pointer',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
-            <AddIcon />
-            Add new list
-          </Box>
-        </Stack>
-      </Box>
-    </Container>
-  )
+  // return (
+  //   <Container sx={{
+  //     minHeight: 'calc(100vh - 64px)',
+  //   }}>
+  //     <Box overflow='auto'>
+  //       <Message controller={messageController} />
+  //       <Typography
+  //         variant="h4"
+  //         paddingY={2}
+  //       >{activeBoard.title}</Typography>
+  //       <Stack direction="row" gap={2}>
+  //         {
+  //           activeBoard.taskLists.map(taskList => <TaskList
+  //             key={taskList.id}
+  //             data={taskList}
+  //             deleteList={handleDeleteTaskList}
+  //           />)
+  //         }
+  //         <Box
+  //           onClick={() => handleAddTaskList()}
+  //           sx={{
+  //             background: colors.grey[800],
+  //             padding: 2,
+  //             borderRadius: '4px',
+  //             minWidth: 300,
+  //             cursor: 'pointer',
+  //             display: 'flex',
+  //             justifyContent: 'center',
+  //             alignItems: 'center'
+  //           }}
+  //         >
+  //           <AddIcon />
+  //           Add new list
+  //         </Box>
+  //       </Stack>
+  //     </Box>
+  //   </Container>
+  // )
 }

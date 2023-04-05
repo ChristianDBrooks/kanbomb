@@ -1,4 +1,3 @@
-import { useIronSession } from '@lib/swr';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from '@mui/material';
@@ -15,6 +14,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/router';
 import * as React from 'react';
+import useSession from 'src/hooks/useSession';
 import SignOut from './SignOut';
 
 interface Page {
@@ -25,10 +25,10 @@ interface Page {
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-  const { session } = useIronSession();
+  const session = useSession();
   const theme = useTheme();
   const router = useRouter();
-  const authenticated = !!session?.user;
+  const authenticated = !!session?.data?.user;
   const pages: Page[] = authenticated ? [
     { text: 'My Board', path: '/' },
   ] : [];

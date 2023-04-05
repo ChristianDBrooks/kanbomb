@@ -30,9 +30,18 @@ async function userRoute(req: NextApiRequest, res: NextApiResponse) {
     }
     /** UPDATE */
     if (req.method === "PATCH") {
-      // const taskList = await prisma.taskList.update({
-
-      // })
+      await prisma.task.update({
+        data: body.task,
+        where: {
+          id: body.id
+        }
+      })
+      const userBoards = await getBoardsByUserId(userId)
+      res.json({
+        data: {
+          boards: userBoards
+        }
+      })
     }
     /** DELETE */
     if (req.method === "DELETE") {
@@ -54,6 +63,8 @@ async function userRoute(req: NextApiRequest, res: NextApiResponse) {
   } catch (err) {
     console.error(err)
     handleDatabaseError(err, res)
-    res.status(500).send('Internal Server Error');
+    if (!res.headersSent) {
+      res.status(500).send('Internal Server Error');
+    }
   }
 }

@@ -1,13 +1,33 @@
 import { withSessionRoute } from "@lib/ironSession";
 import prisma from "@lib/prisma";
+import { Board, Task, TaskList } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getBoardsByUserId, handleDatabaseError } from "src/helpers/database";
+
+export type BoardsWithTaskListsWithTasks = (Board & {
+  taskLists: (TaskList & {
+    tasks: Task[];
+  })[];
+})[]
+
+export type BoardResponse = {
+  data: {
+    boards: BoardsWithTaskListsWithTasks
+  },
+  message?: string;
+}
 
 export default withSessionRoute(userRoute)
 
 async function userRoute(req: NextApiRequest, res: NextApiResponse) {
   if (!req?.session?.user?.userId) {
-    res.status(401).send('Not authorized.')
+    const boardResponse: BoardResponse = {
+      data: {
+        boards: []
+      },
+      message: 'Not Authorized.'
+    }
+    res.status(401).json(boardResponse)
     return;
   };
   const userId = req.session.user.userId;

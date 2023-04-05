@@ -1,6 +1,5 @@
 import { withSessionRoute } from "@lib/ironSession";
 import prisma from "@lib/prisma";
-import { Task } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from "next";
 import { getBoardsByUserId, handleDatabaseError } from "src/helpers/database";
 
@@ -42,62 +41,16 @@ async function userRoute(req: NextApiRequest, res: NextApiResponse) {
     }
     /** UPDATE */
     if (req.method === "PATCH") {
-      console.log('taskList:', body.taskList)
-
-      const { tasks, id, title } = body.taskList;
-
-      const titleUpdate = await prisma.taskList.update({
+      await prisma.taskList.update({
+        data: body.taskList,
         where: {
-          id
-        },
-        data: {
-          title
+          id: body.id
         }
       })
-
-      if (!titleUpdate) {
-        throw new Error("Failed to update task list.")
-      }
-
-      const responses = await prisma.$transaction(
-        [
-          ...tasks.map((task: Task) => {
-            return prisma.task.upsert({
-              where: {
-                id: task.id
-              },
-              create: {
-                ...task,
-                taskListId: id,
-              },
-              update: {
-                text: task.text,
-                complete: task.complete,
-              }
-            })
-          }),
-          prisma.taskList.findUnique({
-            where: {
-              id
-            },
-            include: {
-              tasks: true
-            }
-          })
-        ]
-      )
-
-      if (responses.some((response) => !response)) {
-        throw new Error("Failed to update task list.")
-      }
-
-      const taskList = responses[responses.length - 1]
-
-      console.log('updated taskList:', taskList);
-
+      const userBoards = await getBoardsByUserId(userId)
       res.json({
         data: {
-          taskList
+          boards: userBoards
         }
       })
     }
@@ -117,8 +70,6 @@ async function userRoute(req: NextApiRequest, res: NextApiResponse) {
           boards: userBoards
         }
       })
-
-
     }
   } catch (err) {
     console.error(err)
